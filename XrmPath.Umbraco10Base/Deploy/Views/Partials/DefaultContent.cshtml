@@ -1,5 +1,4 @@
 ﻿@inherits UmbracoViewPage
-@using XrmPath.UmbracoCore.Helpers
 @using XrmPath.UmbracoCore.Utilities
 @using XrmPath.UmbracoCore.Models
 @{
@@ -7,7 +6,7 @@
     //var mediaItem = Umbraco.AssignedContentItem.GetMediaItem("mainImage");
     //string mainImageUrl = mediaItem != null ? mediaItem.Url : "";
     //var mainImageUrl = Model.GetMediaCropUrl(UmbracoCustomFields.MainImage, "main");
-     var mainImageUrl = "";
+    var mainImageUrl = "";
     var hasGrid = Model.HasProperty(UmbracoCustomFields.Grid);
 }
 
@@ -28,6 +27,7 @@
 @if (hasGrid)
 {
     <div class="text">
-        @Html.GetGridHtml(Model, UmbracoCustomFields.Grid, "CSUSKGrid")
+        
+        
     </div>
 }

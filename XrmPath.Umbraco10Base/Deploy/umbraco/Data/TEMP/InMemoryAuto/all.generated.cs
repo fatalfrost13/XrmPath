@@ -5,8 +5,8 @@ using  Umbraco.Cms.Core.PublishedCache;
 using  Umbraco.Cms.Infrastructure.ModelsBuilder;
 using  Umbraco.Cms.Core;
 using  Umbraco.Extensions;
-[assembly:ModelsBuilderAssembly(IsInMemory = true, SourceHash = "041e2754e5e48be812c56b4f106f3e1f9a44717d")]
-[assembly:System.Reflection.AssemblyVersion("0.0.0.1")]
+[assembly:ModelsBuilderAssembly(IsInMemory = true, SourceHash = "40f69c0a3b1ad84212398141c4d15e3ef9a82a95")]
+[assembly:System.Reflection.AssemblyVersion("0.0.0.2")]
 
 
 // FILE: models.generated.cs
@@ -38,6 +38,11 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 	/// <summary>Content Base</summary>
 	public partial interface IContentBase : IPublishedContent
 	{
+		/// <summary>Body Text</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "10.0.0+e3f4b86")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		global::Umbraco.Cms.Core.Strings.IHtmlEncodedString BodyText { get; }
+
 		/// <summary>Description</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "10.0.0+e3f4b86")]
 		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
@@ -94,6 +99,19 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		}
 
 		// properties
+
+		///<summary>
+		/// Body Text
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "10.0.0+e3f4b86")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("bodyText")]
+		public virtual global::Umbraco.Cms.Core.Strings.IHtmlEncodedString BodyText => GetBodyText(this, _publishedValueFallback);
+
+		/// <summary>Static getter for Body Text</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "10.0.0+e3f4b86")]
+		[return: global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		public static global::Umbraco.Cms.Core.Strings.IHtmlEncodedString GetBodyText(IContentBase that, IPublishedValueFallback publishedValueFallback) => that.Value<global::Umbraco.Cms.Core.Strings.IHtmlEncodedString>(publishedValueFallback, "bodyText");
 
 		///<summary>
 		/// Description: Enter a short description for this page. This will appear at the search results description.
@@ -530,6 +548,14 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		}
 
 		// properties
+
+		///<summary>
+		/// Body Text
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "10.0.0+e3f4b86")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("bodyText")]
+		public virtual global::Umbraco.Cms.Core.Strings.IHtmlEncodedString BodyText => global::Umbraco.Cms.Web.Common.PublishedModels.ContentBase.GetBodyText(this, _publishedValueFallback);
 
 		///<summary>
 		/// Description: Enter a short description for this page. This will appear at the search results description.
@@ -1320,6 +1346,14 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		// properties
 
 		///<summary>
+		/// Body Text
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "10.0.0+e3f4b86")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("bodyText")]
+		public virtual global::Umbraco.Cms.Core.Strings.IHtmlEncodedString BodyText => global::Umbraco.Cms.Web.Common.PublishedModels.ContentBase.GetBodyText(this, _publishedValueFallback);
+
+		///<summary>
 		/// Description: Enter a short description for this page. This will appear at the search results description.
 		///</summary>
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "10.0.0+e3f4b86")]
@@ -1774,6 +1808,14 @@ namespace Umbraco.Cms.Web.Common.PublishedModels
 		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "10.0.0+e3f4b86")]
 		[ImplementPropertyType("showComments")]
 		public virtual bool ShowComments => global::Umbraco.Cms.Web.Common.PublishedModels.CommentsConfiguration.GetShowComments(this, _publishedValueFallback);
+
+		///<summary>
+		/// Body Text
+		///</summary>
+		[global::System.CodeDom.Compiler.GeneratedCodeAttribute("Umbraco.ModelsBuilder.Embedded", "10.0.0+e3f4b86")]
+		[global::System.Diagnostics.CodeAnalysis.MaybeNull]
+		[ImplementPropertyType("bodyText")]
+		public virtual global::Umbraco.Cms.Core.Strings.IHtmlEncodedString BodyText => global::Umbraco.Cms.Web.Common.PublishedModels.ContentBase.GetBodyText(this, _publishedValueFallback);
 
 		///<summary>
 		/// Description: Enter a short description for this page. This will appear at the search results description.

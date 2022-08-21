@@ -1,6 +1,10 @@
-﻿@inherits UmbracoViewPage
+﻿@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+@using XrmPath.UmbracoCore.Models
+@using Newtonsoft.Json;
 @{
 	Layout = "SubMaster.cshtml";
 }
 
 @Html.Partial("Partials/DefaultContent")
+
+@Html.GetGridHtml(Model, UmbracoCustomFields.Grid, "Clean")
