@@ -14,8 +14,8 @@
     var selection = site.Children.Where(x => x.IsVisible());
 }
 <!-- comment out the following line if you want to remove the root node name from the top navigation -->
-<a class="nav-link @Html.Raw(Model.Id == site.Id ? "navi-link--active" : "")" href="@pUtil.GetUrl(site)" target="@pUtil.GetTarget(site)">@site.Name</a>
+<a class="nav-link @Html.Raw(Model.Id == site.Id ? "navi-link--active" : "")" href="@pUtil.GetUrl(site)" target="@pUtil.GetTarget(site)">@pUtil.GetTitle(site)</a>
 @foreach (var item in selection)
 {
-    <a class="nav-link @(item.IsAncestorOrSelf(Model) ? "nav-link--active" : null)" href="@pUtil.GetUrl(item)" target="@pUtil.GetTarget(item)">@item.Name</a>
+    <a class="nav-link @(item.IsAncestorOrSelf(Model) ? "nav-link--active" : null)" href="@pUtil.GetUrl(item)" target="@pUtil.GetTarget(item)">@pUtil.GetTitle(item)</a>
 }

@@ -104,7 +104,7 @@ namespace XrmPath.UmbracoUtils
 
             return strTarget;
         }
-        public string GetTitle(IPublishedContent? content, string aliases = "title,pageTitle,name")
+        public string GetTitle(IPublishedContent? content, string aliases = "title,navigationTitle,name")
         {
             var strTitle = string.Empty;
             if (content != null)

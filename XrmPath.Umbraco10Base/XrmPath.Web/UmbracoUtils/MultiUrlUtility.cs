@@ -96,7 +96,7 @@ namespace XrmPath.UmbracoUtils
             var strTitle = "";
             var strTarget = "";
 
-            var navTitle = navContent.GetProperty("pageTitle");
+            var navTitle = navContent.GetProperty(UmbracoCustomFields.NavigationTitle);
             if (navTitle != null)
             {
                 strTitle = navTitle?.GetValue()?.ToString() ?? "";
