@@ -1,0 +1,14 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+
+@using Newtonsoft.Json.Linq
+@using ClientDependency.Core.Mvc
+
+@{
+    Layout = "FullwidthMaster.cshtml";
+    Html.RequiresCss("/css/Article-List.css");
+    Html.RequiresCss("/css/Carousel-Hero.css");
+}
+
+@{ Html.RenderPartial("Partials/MainCarousel"); }
+
+@{ Html.RenderPartial("Partials/LatestArticles"); }

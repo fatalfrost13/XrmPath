@@ -1,0 +1,72 @@
+﻿@inherits UmbracoViewPage
+@using XrmPath.UmbracoCore.Models
+@using XrmPath.UmbracoCore.Utilities
+
+@helper Traverse(IPublishedContent node)
+{
+
+    //var maxLevelForSubNav = String.IsNullOrEmpty(Parameter.maxLevelForSubNav) || Parameter.maxLevelForSubNav == "null" ? 0 : int.Parse(Parameter.maxLevelForSubNav);
+    //var startLevel = String.IsNullOrEmpty(Parameter.startLevel) ? 1 : int.Parse(Parameter.startLevel);
+    //var navClass = String.IsNullOrEmpty(Parameter.navClass) ? "" : Parameter.navClass;
+    var maxLevelForSubNav = 5;
+    var startLevel = 1;
+    
+    var allowAliases = ConfigurationModel.WebsiteContentTypesList;
+    var items = node.Children;
+    var itemNodes = items
+        .Where(i => !i.NodeHidden() && (i.HasAccess() || i.IsMembersEntryPage()))
+        .Where(i => allowAliases.Contains(i.ContentType.Alias))
+        .ToList();
+
+
+
+    var index = 0;
+    foreach (var item in itemNodes)
+    {
+        if ((item.Level > maxLevelForSubNav && maxLevelForSubNav != 0))
+        {
+            continue;
+        }
+        if (node.Level == startLevel && index == 0)
+        {
+            @Html.Raw("<ul>")
+        }
+        else
+        {
+            if (index == 0)
+            {
+                @Html.Raw("<ul class=root>")
+            }
+        }
+
+        //bool selected = Array.IndexOf(Model.Path.Split(','), item.Id.ToString()) >= 0;
+        var selected = item.Id == Model.Id;
+
+        var itemChildren = item.Children.Where(i => !i.NodeHidden() && (i.HasAccess() || i.IsMembersEntryPage()))
+            .Where(i => allowAliases.Contains(i.ContentType.Alias)).ToList();
+
+
+        <li>
+            <a href="@item.GetUrl()" target="@item.GetTarget()">@item.GetTitle()</a>
+            @Traverse(item)
+        </li>
+        index++;
+    }
+
+    if (index <= 0)
+    {
+        return;
+    }
+    @Html.Raw("</ul>")
+}
+
+@{
+    //var startLevel = String.IsNullOrEmpty(Parameter.startLevel) ? 1 : int.Parse(Parameter.startLevel);
+    var startLevel = 1;
+}
+
+@Traverse(@Model.AncestorOrSelf(startLevel))
+
+
+
+

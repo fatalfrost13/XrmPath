@@ -1,0 +1,104 @@
+﻿@using System.Configuration
+@using ClientDependency.Core.Mvc
+@using XrmPath.Web.Helpers;
+@using XrmPath.Web.Helpers.UmbracoHelpers
+@using XrmPath.Web.Models
+
+@inherits Umbraco.Web.Macros.PartialViewMacroPage
+
+@{
+    var jsVersion = VersionModel.JsVersionNumber; 
+    Html.RequiresJs("/Scripts/vue.min.js", 1);
+    Html.RequiresJs("/Scripts/app-ts/loginpage.js?v=" + jsVersion, 30);
+}
+
+@{
+    var uniqueId = Guid.NewGuid();
+    var redirectUrl = MembershipHelper.GetAuthenticationPage(UmbracoCustomLookups.MyProfilePage);
+    var changePasswordUrl = MembershipHelper.GetAuthenticationPage(UmbracoCustomLookups.ChangePasswordPage);
+    var forgotPasswordUrl = MembershipHelper.GetAuthenticationPage(UmbracoCustomLookups.ForgotPasswordPage);
+    if (HttpContext.Current.Request.QueryString["RedirectUrl"] != null)
+    {
+        redirectUrl = HttpContext.Current.Request.QueryString["RedirectUrl"];
+    }
+}
+
+<div id="loginMacroContainer_@uniqueId">
+    <form id="loginForm" name="loginForm">
+        <input type="text" id="redirecturl" name="redirecturl" value="@redirectUrl" style="display: none;" />
+        <div id="loginMacro" class="loginMacro genericForm">
+
+            @if (!MembershipHelper.UserIsAuthenticated())
+            {
+                <div class="row">
+                    <div class="prompt">
+                        <label for="Username" class="col-form-label">Email:</label>
+                    </div>
+                    <div class="input">
+                        <input id="Username" name="Username" type="text" v-model="Username" v-on:keyup.13="login" class="form-control" tabindex="1" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="prompt">
+                        <label form="Password" class="col-form-label">Password:</label>
+                    </div>
+                    <div class="input">
+                        <input id="Password" name="Password" type="password" v-model="Password" v-on:keyup.13="login" class="form-control" tabindex="2" />
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="prompt empty">&nbsp;</div>
+                    <div class="input">
+                        <input type="checkbox" id="checkbox" v-model="RememberMe" class="form-check" tabindex="3"> Remember me
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="prompt empty">&nbsp;</div>
+                    <div class="input">
+                        <a href="@forgotPasswordUrl">Forgot your password?</a>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="prompt empty">&nbsp;</div>
+                    <div class="input">
+                        <a id="loginButton" class="button-primary" v-on:click="login" v-on:keyup.13="login" style="float: left;" tabindex="4">Login</a>
+                        @Html.Partial("LoadingArea", new LoadingModel { LoadingId = "loginLoading", LoadingClass = "loadingSection", Type = 0, LoadingMessage = "Logging in", LoadingStyle = "float: left; padding-left: 10px;" })
+                    </div>
+                </div>
+                <div class="row" v-show="Message != ''">
+                    <div class="prompt empty">&nbsp;</div>
+                    <div class="messageArea">
+                        <div class="message" v-html="Message"></div>
+                    </div>
+                </div>
+            }
+            else
+            {
+                if (!string.IsNullOrEmpty(redirectUrl))
+                {
+                    //redirect
+                    HttpContext.Current.Response.Redirect(redirectUrl);
+                }
+
+                var userName = HttpContext.Current.User.Identity.Name;
+                <div>
+                    You are currently logged in as <strong>@userName</strong>.
+                </div>
+                <br />
+                <div>
+                    <a v-on:click="logout" href="javascript:void(0);" class="button-primary">Logout</a>
+                    &nbsp;
+                    <a href="@changePasswordUrl" class="button-primary">Change Password</a>
+                </div>
+                <br />
+                @Html.Partial("LoadingArea", new LoadingModel { LoadingId = "logoutLoading", LoadingClass = "loadingSection", Type = 0, LoadingMessage = "Logging out", LoadingStyle = "float: left; padding-left: 10px;" })
+            }
+        </div>
+    </form>
+</div>
+
+@*<script>LoginPageApplication.Initialize("#loginMacroContainer_@uniqueId");</script>*@
+
+<script>
+        new LoginPageApplication("#loginMacroContainer_@uniqueId").Initialize();
+</script>

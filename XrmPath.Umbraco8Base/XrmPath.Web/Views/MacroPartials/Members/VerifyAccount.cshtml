@@ -1,0 +1,57 @@
+﻿@using System.Configuration
+@using XrmPath.Web.Helpers;
+@using XrmPath.Web.Helpers.UmbracoHelpers
+@using XrmPath.Web.Models
+@inherits Umbraco.Web.Macros.PartialViewMacroPage
+
+@{
+    var email = Request.QueryString["email"];
+    var verificationKey = Request.QueryString["verificationKey"];   //key represent web membership id guid
+    var memberModel = new MemberModel();
+    var loginUrl = MembershipHelper.GetAuthenticationPage(UmbracoCustomLookups.LoginPage);
+    var eventId = Request.QueryString["eventId"] ?? string.Empty;
+    var redirectUrl = string.Empty;
+    var isAuthenticated = HttpContext.Current.User.Identity.IsAuthenticated;
+
+
+    if (!string.IsNullOrEmpty(verificationKey))
+    {
+        memberModel = MembershipHelper.VerifyAccount(email, verificationKey);
+    }
+    else
+    {
+        memberModel.Message = "Invalid Request.";
+    }
+}
+
+<div id="verifyAccountMacro" class="verifyAccountMacro">
+
+    @if (!string.IsNullOrEmpty(memberModel.Message))
+    {
+        <div>
+            @Html.Raw(memberModel.Message)
+            @if (memberModel.AccountVerified)
+            {
+                <br />
+                if (isAuthenticated && !string.IsNullOrEmpty(redirectUrl) && !string.IsNullOrEmpty(eventId))
+                {
+                    <span>Click <a href="@redirectUrl" style="font-weight:bold;">here</a> to continue with your event registration.</span>
+                }
+                else if (!isAuthenticated && !string.IsNullOrEmpty(redirectUrl) && !string.IsNullOrEmpty(eventId))
+                {
+                    <span>Click <a href="@loginUrl" style="font-weight:bold;">here</a> to login and continue with your event registration.</span>
+                }
+                else if (isAuthenticated && !string.IsNullOrEmpty(redirectUrl))
+                {
+                    <span>Click <a href="@loginUrl" style="font-weight:bold;">here</a> to continue.</span>
+                }
+                else
+                {
+                    <span>Click <a href="@loginUrl" style="font-weight:bold;">here</a> to login.</span>
+                }
+                <br /><br />
+            }
+        </div>
+    }
+
+</div>

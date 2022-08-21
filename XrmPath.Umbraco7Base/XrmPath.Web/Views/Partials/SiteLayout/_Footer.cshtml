@@ -1,0 +1,35 @@
+﻿@inherits UmbracoViewPage
+
+@using Umbraco.Web.Models
+
+@{ 
+    IEnumerable<RelatedLink> footerSocialLinks = Umbraco.AssignedContentItem.GetPropertyValue<IEnumerable<RelatedLink>>("footerSocialLinks", true);
+    IEnumerable<RelatedLink> footerLinks = Umbraco.AssignedContentItem.GetPropertyValue<IEnumerable<RelatedLink>>("footerLinks", true);
+}
+
+
+<div class="footer-basic">
+    <footer>
+        @if (footerSocialLinks != null && footerSocialLinks.Count() > 0)
+        {
+            <div class="social">
+                @foreach (RelatedLink link in footerSocialLinks)
+                {
+                    <a href="@link.Link"  target="@(link.NewWindow ? "_blank" : null)"><i class="icon fa fa-@link.Caption"></i></a>
+                }
+            </div>
+        }
+        @if (footerLinks != null && footerLinks.Count() > 0)
+        {
+            <ul class="list-inline">
+                @foreach (RelatedLink link in footerLinks)
+                {
+                    <li><a href="@link.Link" target="@(link.NewWindow ? "_blank" : null)">@link.Caption</a></li>
+                }
+            </ul>
+        }
+
+        @*<p class="copyright">XrmPath <a href="http://xrmpath.com/" target="_blank">xrmpath.com</a> &copy; @DateTime.Now.Year</p>*@
+
+    </footer>
+</div>

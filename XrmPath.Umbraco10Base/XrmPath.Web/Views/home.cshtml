@@ -1,0 +1,13 @@
+﻿@inherits UmbracoViewPage
+@using ClientDependency.Core.Mvc
+
+
+@{
+    Layout = "fullwidthMaster.cshtml";
+    Html.RequiresCss("/css/Article-List.css");
+    Html.RequiresCss("/css/Carousel-Hero.css");
+}
+
+@{ Html.RenderPartial("Partials/MainCarousel"); }
+
+@{ Html.RenderPartial("Partials/LatestArticles"); }

@@ -1,0 +1,10 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+@using ClientDependency.Core.Mvc
+@{
+    Layout = "SubMaster.cshtml";
+    Html.RequiresCss("/css/Article-Clean.css");
+}
+
+@Html.Partial("Partials/DefaultContent")
+
+@Html.Partial("Search")

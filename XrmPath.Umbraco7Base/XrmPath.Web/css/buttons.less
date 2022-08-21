@@ -1,0 +1,117 @@
+﻿@import "/variables.less";
+
+@button-padding-topbottom: 6px;
+@button-padding-leftright: 12px;
+@button-border-width: 2px;
+
+//----------Generic styles for all buttons----------
+a.button-primary, button.button-primary, .button-primary a, input[type="button"].button-primary, input[type="submit"].button-primary, a span.button-primary,
+a.button-secondary, button.button-secondary, .button-secondary a, input[type="button"].button-secondary, input[type="submit"].button-secondary, a span.button-secondary,
+a.button-white, button.button-white, .button-white a, input[type="button"].button-white, input[type="submit"].button-white, a span.button-white,
+a.button-clearwhite, button.button-clearwhite, .button-clearwhite a, input[type="button"].button-clearwhite, input[type="submit"].button-clearwhite, a span.button-clearwhite,
+a.button-disabled, button.button-disabled, .button-disabled a, input[type="button"].button-disabled, input[type="submit"].button-disabled, a span.button-disabled {
+    border: none;
+    padding: @button-padding-topbottom @button-padding-leftright;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    white-space: nowrap;
+    display: inline-block;
+    font-size: @global-default-font-size;
+    border-radius: 4px;
+    font-weight: bold;
+
+    @media only screen and (max-width: @mobile-max-width) {
+        font-size: @global-default-font-size * @mobile-max-width-scale-percentage;
+        padding: (@button-padding-topbottom * @mobile-max-width-scale-percentage) (@button-padding-leftright * @mobile-max-width-scale-percentage);
+    }
+
+    @media only screen and (max-width: @small-device-max-width) {
+        font-size: @global-default-font-size * @small-device-scale-percentage;
+        padding: (@button-padding-topbottom * @small-device-scale-percentage) (@button-padding-leftright * @mobile-max-width-scale-percentage);
+    }
+}
+//----------Primary Button and Alternate styles----------
+a.button-primary, button.button-primary, .button-primary a, input[type="button"].button-primary, input[type="submit"].button-primary, a span.button-primary {
+    color: @primary-color-complimentary;
+    border: @button-border-width solid @primary-color;
+    background-color: @primary-color;
+}
+
+a:hover.button-primary, button:hover.button-primary, .button-primary a:hover, input[type="button"].button-primary:hover, input[type="submit"].button-primary:hover, a:hover span.button-primary {
+    border: @button-border-width solid @secondary-color;
+    background-color: @secondary-color;
+}
+
+//----------Secondary Button and Alternate styles----------
+a.button-secondary, button.button-secondary, .button-secondary a, input[type="button"].button-secondary, input[type="submit"].button-secondary, a span.button-secondary {
+    color: @primary-color;
+    border: @button-border-width solid @primary-color;
+    //background-color: transparent;
+    background-color: @primary-color-complimentary;
+}
+
+a:hover.button-secondary, button:hover.button-secondary, .button-secondary a:hover, input[type="button"].button-secondary:hover, input[type="submit"].button-secondary:hover, a:hover span.button-secondary {
+    color: @primary-color-complimentary;
+    border: @button-border-width solid @secondary-color;
+    background-color: @secondary-color;
+}
+
+//----------White Button styles----------
+a.button-white, button.button-white, .button-white a, input[type="button"].button-white, input[type="submit"].button-white, a span.button-white {
+    border: (@button-border-width - 1) solid #ccc;
+    color: @primary-color-text;
+    background-color: @white-color;
+    padding: (@button-padding-topbottom + 1) (@button-padding-leftright+1);
+
+    @media only screen and (max-width: @mobile-max-width) {
+        padding: ((@button-padding-topbottom + 1) * @mobile-max-width-scale-percentage) ((@button-padding-leftright + 1) * @mobile-max-width-scale-percentage);
+    }
+
+    @media only screen and (max-width: @small-device-max-width) {
+        padding: ((@button-padding-topbottom + 1) * @small-device-scale-percentage) ((@button-padding-leftright + 1) * @mobile-max-width-scale-percentage);
+    }
+}
+
+a:hover.button-white, button:hover.button-white, .button-white a:hover, input[type="button"].button-white:hover, input[type="submit"].button-white:hover, a:hover span.button-white {
+    border: (@button-border-width - 1) solid @lightgrey-color;
+    background-color: @lightgrey-color;
+    padding: (@button-padding-topbottom + 1) (@button-padding-leftright + 1);
+
+    @media only screen and (max-width: @mobile-max-width) {
+        padding: ((@button-padding-topbottom + 1) * @mobile-max-width-scale-percentage) ((@button-padding-leftright + 1) * @mobile-max-width-scale-percentage);
+    }
+
+    @media only screen and (max-width: @small-device-max-width) {
+        padding: ((@button-padding-topbottom + 1 ) * @small-device-scale-percentage) ((@button-padding-leftright + 1) * @mobile-max-width-scale-percentage);
+    }
+}
+
+//--Clear White
+a.button-clearwhite, button.button-clearwhite, .button-clearwhite a, input[type="button"].button-clearwhite, input[type="submit"].button-clearwhite, a span.button-clearwhite {
+    font-weight: 600;
+    color: @white-color;
+    border: @button-border-width solid @white-color;
+    background-color: rgba(0,0,0,0);
+}
+
+a:hover.button-clearwhite, button:hover.button-clearwhite, .button-clearwhite a:hover, input[type="button"].button-clearwhite:hover, input[type="submit"].button-clearwhite:hover, a:hover span.button-clearwhite {
+    background-color: @white-color;
+    color: @black-color-secondary;
+}
+
+
+//----------Disabled Button styles----------
+a.button-disabled, button.button-disabled, .button-disabled a, input[type="button"].button-disabled, input[type="submit"].button-disabled, a span.button-disabled {
+    cursor: default;
+    border: 2px solid @disabled-color;
+    /*padding: (6px - 1) (12px - 1);*/
+    color: @white-color;
+    opacity: .65;
+    background-color: @disabled-color;
+}
+
+a:hover.button-disabled, button:hover.button-disabled, .button-disabled a:hover, input[type="button"].button-disabled:hover, input[type="submit"].button-disabled:hover, a:hover span.button-disabled {
+    opacity: .75;
+    background-color: @disabled-color;
+}

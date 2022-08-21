@@ -1,0 +1,277 @@
+﻿@inherits UmbracoViewPage
+
+@using ClientDependency.Core.Mvc;
+@using Umbraco.Web.Models;
+@using XrmPath.Web.Helpers;
+@using XrmPath.Web.Helpers.UmbracoHelpers;
+@using XrmPath.Web.Models;
+
+@{
+    //var pListAlias = Parameter.ListAlias;
+    var pListAlias = "articleList";
+    var targetId = "koCommentList_" + Guid.NewGuid().ToString().Replace("-", "");
+    var currentNode = CustomUmbracoHelper.GetCurrentPage();
+
+    var showComments = currentNode.GetNodeBoolean("showComments");
+    var allowComments = currentNode.GetNodeBoolean("allowComments");
+    var requiresAuthentication = currentNode.GetNodeBoolean("requiresAuthentication");
+    var isAuthenticated = HttpContext.Current.User.Identity.IsAuthenticated;
+
+    var displayName = "";
+    var displayCommentForm = false;
+    if (allowComments) {
+        if (!requiresAuthentication || (requiresAuthentication && isAuthenticated)) {
+            displayCommentForm = true;
+            if (isAuthenticated)
+            {
+                var member = MembershipHelper.GetMember(User.Identity.Name);
+                displayName = member.Name;
+            }
+        }
+    }
+}
+
+
+@{
+    Html.RequiresJs("/Scripts/knockout-latest.js", 1);
+    //Html.RequiresJs("/Scripts/jquery.validate.min", 2);
+}
+
+<!--<script type="text/javascript" src="/scripts/jquery.validate.js"></script>
+<script type="text/javascript" src="/scripts/jquery.validate.unobtrusive.js"></script>-->
+
+<style>
+
+
+    .commentItem, .commentItemAlt {
+        /*padding-top: 10px;
+        padding-bottom: 10px;*/
+        padding:10px;
+    }
+
+    .commentItemAlt {
+        background-color: #EDF3FE;
+    }
+
+    .commentForm td {
+        vertical-align: top;
+    }
+
+    .requiredField, .formexample {
+        color: Red;
+    }
+
+    .dvForm td {
+        vertical-align: top;
+        padding-right: 5px;
+    }
+
+    .dvForm input, .dvForm textarea, .dvForm select {
+        display: inline;
+    }
+    .dvForm input[type=text] {
+        width: 250px;
+    }
+
+    label.error {
+        display: inline-table;
+    }
+</style>
+
+<style type="text/css">
+
+    label {
+        float: left;
+    }
+
+        label.error {
+            float: none;
+            color: red;
+            margin-left: 10px;
+            vertical-align: top;
+            text-wrap: none;
+        }
+</style>
+
+<script>
+    function ValidateForm() {
+        var form = document.forms[0].id;
+        if (
+            $("#" + form).validate({
+                rules: {
+                    txtName: "required",
+                    txtComment: "required"
+                }
+            }).form() == true
+        ) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+</script>
+
+
+<br />
+<form id="@targetId" class="dvForm">
+
+    @if (displayCommentForm)
+    {
+        <p>
+            <a href="#" data-bind="click: $root.displayComment, visible: !formVisible()">Add Comment</a>
+        </p>
+        <div data-bind="visible: formVisible">
+            <br />
+            <table class="commentForm">
+                <tr>
+                    <td><label for="txtName">Display Name:</label>&nbsp;</td>
+
+                    <td><input type="text" ID=txtName name="txtName" value="@displayName"
+                     @if (!string.IsNullOrEmpty(displayName)) { 
+                        @:readonly
+                     }/></td>
+
+                </tr>
+                <tr>
+                    <td colspan=2>&nbsp;</td>
+                </tr>
+                <tr>
+                    <td><label for="txtComment">Comment:</label>&nbsp;</td>
+                    <td><textarea ID=txtComment name="txtComment" TextMode=MultiLine rows=8 cols=55></textarea></td>
+                </tr>
+                <tr>
+                    <td colspan=2>&nbsp;</td>
+                </tr>
+                <tr>
+                    <td>&nbsp;</td>
+                    <td>
+                        <input type="button" value="Submit" id="btnSubmit" data-bind="click: $root.submitForm" />
+                        &nbsp;&nbsp;&nbsp;
+                        <input type="button" value="Cancel" id="btnCancel" data-bind="click: $root.cancelForm" />
+                        <div data-bind="visible: saving"><img src="/images/bigrotation2.gif" width="25" />&nbsp;<b>Submitting comment, please wait...</b></div>
+                    </td>
+                </tr>
+            </table>
+            <br />
+        </div>
+        <p data-bind="html: formMessage"></p>
+    }
+
+
+    @if (showComments)
+    {
+        <div data-bind="visible: comments().length > 0">
+            <br />
+            <h6>Comments</h6>
+
+            <div data-bind="foreach: comments">
+                <div class=commentItem data-bind="css: { commentItemAlt: $index()%2 }">
+                    <b><span data-bind="text: UserName"></span> wrote</b>:<br />
+                    <span data-bind="text: Comment"></span><br />
+                    <em><span data-bind="text: DisplayCreateDate"></span></em>
+                </div>
+            </div>
+        </div>
+    }
+
+</form>
+
+<script>
+
+    var CommentListModel = function () {
+        var self = this;
+        //self.items = ko.observableArray(items);
+        self.comments = ko.observableArray([]);
+        self.formVisible = ko.observable(false);
+        self.formMessage = ko.observable("");
+        self.saving = ko.observable(false);
+
+        //console.log(self.comments().length);
+
+        var bindData = function() {
+            var currentNodeId = '@currentNode.Id';
+            //console.log('/api/comment/GetComments?id=' + currentNodeId);
+            $.get('/api/comment/GetComments?id=' + currentNodeId, function(data) {
+                self.comments(data);
+                //self.comments([]);
+            });
+        };
+
+        bindData();
+
+
+        self.displayComment = function()
+        {
+            //self.formVisible = true;
+            //console.log(self.formVisible);
+            self.formMessage("");
+            self.formVisible(true);
+        };
+
+        self.cancelForm = function()
+        {
+            $("#txtName").val("");
+            $("#txtComment").val("");
+            self.formMessage("");
+            self.formVisible(false);
+        };
+
+        self.submitForm = function()
+        {
+            if (ValidateForm() == true) {
+                self.saving(true);
+                JsonPost();   //post data
+                $("#txtName").val("");
+                $("#txtComment").val("");
+                self.formVisible(false);
+                self.saving(false);
+            }
+        };
+
+        var JsonPost = function() {
+
+            var message = "";
+            var commentform = { };
+            commentform.NodeId = @currentNode.Id;
+            commentform.ListAlias = '@pListAlias';
+            commentform.UserName = $("#txtName").val();
+            commentform.Comment = $("#txtComment").val();
+            commentform.CreateDate = "";
+            commentform.DisplayCreateDate = "";
+
+            $.ajax({
+                url: '/api/comment/PostComment',
+                data: commentform,
+                type: 'POST',
+                success: function(data) {
+                    message = data;
+                    if (message==null || message=="") {
+                        message = "<font color=red>Comment was successfully posted</font><br /><br />";
+                    }
+                    self.formMessage(message);
+                    bindData();
+                },
+                error: function(data) {
+                    message = data;
+                    //message = "error";
+                    if (message==null || message=="") {
+                        message = "<font color=red>An error as occurred, please contact the site administrator for support.</font><br /><br />";
+                    }else {
+                        message = "<font color=red>" + message + "</font><br /><br />";
+                    }
+                    self.formMessage(message);
+                }
+            });
+        };
+
+    };
+
+    var targetId = @targetId;
+
+    if (targetId!=""){
+        ko.applyBindings(new CommentListModel(), targetId);
+    }
+
+
+</script>

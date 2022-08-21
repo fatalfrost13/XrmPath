@@ -1,0 +1,13 @@
+﻿@using XrmPath.Web.Helpers.Utils
+
+@inherits Umbraco.Web.Macros.PartialViewMacroPage
+
+@{
+    MembershipUtility.CustomSignout();
+
+    var redirectUrl = Request.QueryString["redirectUrl"];
+    if (!string.IsNullOrEmpty(redirectUrl))
+    {
+        Response.Redirect(redirectUrl);
+    }
+}

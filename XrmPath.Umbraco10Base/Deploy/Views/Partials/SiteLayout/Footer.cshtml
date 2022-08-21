@@ -1,0 +1,35 @@
+﻿@inherits UmbracoViewPage
+@using XrmPath.UmbracoCore.Utilities
+@using XrmPath.UmbracoCore.Models
+
+@{
+    IPublishedContent homePage = Model.AncestorOrSelf(UmbracoCustomTypes.HomePage);
+    var footerSocialLinks = MultiUrlUtility.GetUrlPickerList(homePage.Id, UmbracoCustomFields.FooterSocialLinks);
+    var footerLinks = MultiUrlUtility.GetUrlPickerList(homePage.Id, UmbracoCustomFields.FooterLinks);
+}
+
+<div class="footer-basic">
+    <footer>
+        @if (footerSocialLinks != null && footerSocialLinks.Count() > 0)
+        {
+            <div class="social">
+                @foreach (var link in footerSocialLinks)
+                {
+                    <a href="@link.Url" target="@(link.NewWindow ? "_blank" : null)"><i class="icon fa fa-@link.Title"></i></a>
+                }
+            </div>
+        }
+        @if (footerLinks != null && footerLinks.Count() > 0)
+        {
+            <ul class="list-inline">
+                @foreach (var link in footerLinks)
+                {
+                    <li><a href="@link.Url" target="@(link.NewWindow ? "_blank" : null)">@link.Title</a></li>
+                }
+            </ul>
+        }
+
+        @*<p class="copyright">XrmPath <a href="http://xrmpath.com/" target="_blank">xrmpath.com</a> &copy; @DateTime.Now.Year</p>*@
+
+    </footer>
+</div>

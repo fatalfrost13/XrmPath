@@ -1,0 +1,109 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+@using umbraco.MacroEngines;
+@using System.Xml;
+@using XrmPath.Web.Helpers.UmbracoHelpers;
+
+@{
+	Layout = null;
+}
+
+@{
+
+    //parameters
+    var documentType = Model.Content.GetContentValue("documentType");
+    if (string.IsNullOrEmpty(documentType))
+    {
+        documentType = "article";
+    }
+    var objBlogRoot = Model.Content.GetContentPicker("contentPicker");
+    if (objBlogRoot == null)
+    {
+        objBlogRoot = QueryUtility.GetPageByUniqueId("blogRoot");
+    }
+
+    //fieldname mappings
+    var titleField = Model.Content.GetContentValue("titleMapping");
+    if (string.IsNullOrEmpty(titleField))
+    {
+        titleField = "title";
+    }
+    var descriptionField = Model.Content.GetContentValue("descriptionMapping");
+    if (string.IsNullOrEmpty(descriptionField))
+    {
+        descriptionField = "description";
+    }
+
+    var dateField = Model.Content.GetContentValue("dateMapping");
+    if (string.IsNullOrEmpty(dateField)) 
+    {
+        dateField = "date";
+    }
+    var authorField = Model.Content.GetContentValue("authorMapping");
+
+    // Get posts
+    var colPosts = objBlogRoot.Descendants(documentType).ToList();
+    if (!string.IsNullOrEmpty(dateField))
+    {
+        colPosts = colPosts.OrderBy(dateField + " desc").ToList();
+    }
+    else
+    {
+        colPosts = colPosts.OrderByDescending(i => i.CreateDate).ToList();
+    }
+
+    // Get the latest post date
+    DateTime dtmPostDate = colPosts.Count() == 0 ? DateTime.Now : colPosts.FirstOrDefault().GetDateTime(dateField);
+
+    // Clear any current response
+    Response.Clear();
+    // Set new response type to rss
+    Response.ContentType = "text/xml";
+
+    // Create the feedwriter and start document
+    XmlTextWriter objFeedWriter = new XmlTextWriter(Response.OutputStream, System.Text.Encoding.UTF8);
+
+    objFeedWriter.WriteStartDocument();
+
+    // Set up/declare the rss content
+    objFeedWriter.WriteStartElement("rss");
+    objFeedWriter.WriteAttributeString("version", "2.0");
+
+    // Output the channel information
+    objFeedWriter.WriteStartElement("channel");
+    objFeedWriter.WriteElementString("title", Model.Content.GetContentValue("title"));
+    objFeedWriter.WriteElementString("description", Model.Content.GetContentValue("description"));
+    objFeedWriter.WriteElementString("copyright", Model.Content.GetContentValue("copyright"));
+    objFeedWriter.WriteElementString("image", Model.Content.GetContentValue("image"));
+    objFeedWriter.WriteElementString("link", Umbraco.NiceUrlWithDomain(objBlogRoot.Id));
+    objFeedWriter.WriteElementString("lastBuildDate", dtmPostDate.ToString("ddd, dd MMMM yyyy HH:mm:ss"));
+    objFeedWriter.WriteElementString("pubDate", dtmPostDate.ToString("ddd, dd MMMM yyyy HH:mm:ss"));
+
+    // Output the posts information
+    foreach (IPublishedContent objPost in colPosts)
+    {
+        objFeedWriter.WriteStartElement("item");
+        objFeedWriter.WriteElementString("title", objPost.GetContentValue(titleField));
+
+        if (!string.IsNullOrEmpty(authorField) && !string.IsNullOrEmpty(Model.Content.GetContentValue(authorField)))
+        {
+            objFeedWriter.WriteElementString("author", objPost.GetContentValue(authorField));
+        }
+
+        objFeedWriter.WriteElementString("comments", Umbraco.NiceUrlWithDomain(objPost.Id));
+        objFeedWriter.WriteElementString("description", objPost.GetContentValue(descriptionField));
+        objFeedWriter.WriteElementString("link", Umbraco.NiceUrlWithDomain(objPost.Id));
+        objFeedWriter.WriteElementString("guid", Umbraco.NiceUrlWithDomain(objPost.Id));
+        objFeedWriter.WriteElementString("pubDate", objPost.GetDateTime(dateField).ToString("ddd, dd MMMM yyyy HH:mm:ss"));
+        objFeedWriter.WriteEndElement();
+    }
+
+    // Finnish and end the rss feed
+    objFeedWriter.WriteEndElement();
+    objFeedWriter.WriteEndElement();
+    objFeedWriter.WriteEndDocument();
+    objFeedWriter.Flush();
+    objFeedWriter.Close();
+
+    // Finish the response
+    Response.End();
+}

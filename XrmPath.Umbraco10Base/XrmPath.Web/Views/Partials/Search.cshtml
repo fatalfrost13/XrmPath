@@ -1,0 +1,269 @@
+﻿@inherits UmbracoViewPage
+@using ClientDependency.Core.Mvc
+@using XrmPath.UmbracoCore.Models
+@using XrmPath.UmbracoCore.Models
+@using XrmPath.UmbracoCore.Utilities
+@{
+    var jsVersion = VersionModel.JsVersionNumber;
+    Html.RequiresJs("/Scripts/knockout-latest.js", 1);
+    Html.RequiresJs("/Scripts/sammy.min.js", 1);
+    Html.RequiresJs("/Scripts/ko-XrmBase.js?v=" + jsVersion, 30);
+}
+
+@{
+
+    //var searchNode = CustomUmbracoHelper.GetCurrentPage();
+    var searchNode = Model;
+
+    var searchNodeId = searchNode.Id;
+    var searchTerm = Request.QueryString["s"];
+    var pageUrl = searchNode.Url;
+    var pageSize = "1000000";
+
+    var pageSizeValue = searchNode.GetContentValue(UmbracoCustomFields.PageSize);
+    if (!string.IsNullOrEmpty(pageSizeValue) && pageSizeValue != "0")
+    {
+        pageSize = pageSizeValue;
+    }
+    else
+    {
+        pageSize = "10";
+    }
+
+    var targetId = "koSearch_" + Guid.NewGuid().ToString().Replace("-", "");
+}
+
+<style>
+    .pager span {
+        padding: 5px;
+    }
+
+    .pager .pages a {
+        padding: 5px;
+    }
+
+        .pager .pages a.current {
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+    .searchBox {
+        display: inline !important;
+    }
+    .livesearch {
+        width: 200px;
+        margin-bottom: 10px;    
+    }
+
+</style>
+
+<div id="@targetId">
+
+    <div id=searchArea>
+
+        <input type="text" class="livesearch" placeholder="search" id="txtKoSearch" name="txtKoSearch" value="@searchTerm" data-bind="enterkey: $root.searchKeyUp">
+        &nbsp;
+        <input type="button" class="searchButton" value="Search" id="btnSearch" name="btnSearch" />
+       
+        <div class="resultsummary" data-bind="visible: searchTerm() != ''">
+            Your search for: &nbsp;<b><span style="text-decoration: underline"><span data-bind="text: searchTerm"></span></span></b>&nbsp;returned&nbsp;
+            <i><b><span data-bind="text: totalItemCount"></span></b>&nbsp; result(s)</i>
+            <br /><br />
+        </div>
+
+        <div class="noresults" data-bind="visible: false">No Results Found.</div>
+
+        <div class="pager" style="padding-bottom:20px;">
+            <a class="prev" data-bind="click: $root.prevPage" style="cursor:pointer;">« previous</a>
+            <span class="pages"></span>
+            <a class="next" data-bind="click: $root.nextPage" style="cursor:pointer;">next »</a>
+        </div>
+
+        <div class="results" data-bind="foreach: results">
+            <a data-bind="text: Title, attr: {href: Url, target:$root.getTarget(Type)}"></a>
+            <p data-bind="text: ShortDescription"></p>
+        </div>
+
+
+        <div class="pager" style="padding-top:10px;">
+            <a class="prev" data-bind="click: $root.prevPage" style="cursor:pointer;">« previous</a>
+            <span class="pages"></span>
+            <a class="next" data-bind="click: $root.nextPage" style="cursor:pointer;">next »</a>
+        </div>
+
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    var runonce = false;
+
+        function LiveSearch() {
+            var searchBox = $("#txtKoSearch");
+            var pageSize = '@pageSize';
+            //var pageSize = $("input[name=pagesize]:checked").val();
+            var resultshidden = false;
+            var self = this;
+
+            self.results = ko.observable([]);
+            self.pageselect = ko.observableArray([1]);
+            self.currentPage = ko.observable(1);
+            self.numberOfPages = ko.observable(1);
+            self.initalized = ko.observable(0);
+            self.searchTerm = ko.observable("");
+            self.totalItemCount = ko.observable("");
+
+            self.goToPage = function (page) {
+                location.hash = '#page' + page;
+                self.currentPage(page);
+            };
+
+            // Client-side routes
+            Sammy(function () {
+                this.get('#page:page', function () {
+                    self.currentPage(this.params.page);
+                    runSearch(searchBox.val());
+                });
+                this.get('@pageUrl', function () { this.app.runRoute('get', '#page1'); });  //binds the initial request and only runs thise for the pageUrl
+            }).run();
+
+            self.init = function () {
+
+                $(".pager").hide();
+
+                //$(".livesearch").keyup(function (e) {
+                //    var currentSearchTerm = $(e.currentTarget).val();
+                //    runSearch(currentSearchTerm);
+                //});
+                $(".searchButton").click(function (e) {
+                    var searchTerm = $(".livesearch").val();
+                    var currentSearchTerm = searchTerm;
+                    runSearch(currentSearchTerm);
+                });
+
+                if (self.initalized() == 0) {
+                    var searchTerm = '@searchTerm';
+                    runSearch(searchTerm);
+                    self.initalized(1);
+                }
+            };
+
+            self.searchKeyUp = function()
+            {
+                //console.log('test');
+                var searchTerm = $(".livesearch").val();
+                runSearch(searchTerm);
+            }
+
+            var runSearch = function (searchTerm) {
+
+                if (searchTerm == null) {
+                    searchTerm = $(".livesearch").val();
+                }
+
+                 self.searchTerm(searchTerm);
+                 if (searchTerm != "") {
+
+                     $.get("/api/Search/GetSearchResults/?searchterm=" + searchTerm + "&pagesize=" + pageSize + "&currentpage=" + self.currentPage(), function (e) {
+
+                         self.numberOfPages(e.Pagination.NumberOfPages);
+                         self.totalItemCount(e.Pagination.TotalItemCount);
+
+                         if (self.currentPage() > self.numberOfPages() && self.currentPage() != 1) {
+                             self.goToPage(1);
+                             return false;
+                         }
+
+                         if (e.Pagination.NumberOfPages > 1) {
+
+                             $(".pager").fadeIn();
+
+                             $(".pages").empty();
+
+                             var i = 0;
+                             while (i < e.Pagination.NumberOfPages) {
+                                 i++;
+                                 var page = document.createElement("a");
+                                 $(page).attr("href", "#page" + i).attr("data-page", i).append(i);
+
+                                 if (i == self.currentPage()) {
+                                     $(page).addClass("current");
+                                 }
+                                 $(".pages").append(page);
+
+                             }
+
+                         } else {
+                             $(".pages").empty();
+                             $(".pager").fadeOut();
+                         }
+
+                         if (e.SearchResultItems.length > 0) {
+                             self.results(e.SearchResultItems);
+                             if (resultshidden) {
+                                 $(".noresults").fadeOut(250, function () {
+                                     resultshidden = false;
+                                     $(".results").fadeIn(250, function () {
+                                     });
+                                 });
+                             }
+                         } else {
+                             if (!resultshidden) {
+                                 $(".results").fadeOut(250, function () {
+                                     resultshidden = true;
+                                     $(".noresults").fadeIn(250);
+                                     self.results([]);
+                                 });
+                             }
+                         }
+                         return true;
+                     }).error(function () {
+                     });
+
+                 }
+            };
+            self.init();
+
+            self.prevPage = function () {
+                var newpage = (self.currentPage()/1) - 1;
+                if (newpage < 1) {
+                    if (self.currentPage() == 1) {
+                        return false;
+                    } else {
+                        newpage = self.currentPage();
+                    }
+                }
+                self.goToPage(newpage);
+                return true;
+            };
+
+            self.nextPage = function () {
+                var newpage = (self.currentPage()/1) + 1;
+                if (newpage > self.numberOfPages()) {
+                    if (self.currentPage() == self.numberOfPages()) {
+                        return false;
+                    } else {
+                        newpage = self.numberOfPages();
+                    }
+                }
+                self.goToPage(newpage);
+                return true;
+            };
+
+            self.getTarget = function (type) {
+                //console.log(type);
+                if (type == 'media') {
+                    return '_blank';
+                }
+                return "_self";
+            }
+
+        }
+
+    var targetId = @targetId;
+    if (targetId!=""){
+        ko.applyBindings(new LiveSearch(), targetId);
+    }
+
+
+</script>

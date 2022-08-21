@@ -1,0 +1,100 @@
+﻿.loadingSection {
+    display: none;
+
+    img {
+        width: 25px;
+    }
+}
+
+.loadingArea {
+    .loadingContainer {
+        width: 100%;
+        text-align: center;
+
+        .loadingSection {
+            display: inline-block;
+            margin-top: 30px;
+            text-align: left;
+
+            img {
+                float: left;
+                width: 30px;
+                margin-right: 10px;
+            }
+
+            .loadingMessage {
+                font-size: 20px;
+                float: left;
+            }
+        }
+    }
+
+    .loadingErrorMessage {
+        width: 100%;
+        text-align: center;
+        margin-top: 30px;
+        color: red;
+        font-size: 20px;
+    }
+
+    .loadingContainer, .loadingErrorMessage {
+        display: none;
+    }
+
+    .loadingContainer.active, .loadingErrorMessage.active {
+        display: inline-block;
+    }
+}
+
+.genericForm {
+    .row {
+        padding: 5px;
+
+        .requiredField {
+            float: left;
+            width: 15px;
+            display: inline-block;
+            color: red;
+            margin-top: 5px;
+            margin-bottom: -5px;
+        }
+
+        .prompt {
+            width: 100px;
+            float: left;
+            padding-top: 5px;
+        }
+
+        .input {
+            float: left;
+
+            input[type=text], input[type=password] {
+                width: 200px;
+            }
+
+            textarea {
+                width: 200px;
+                height: 100px;
+            }
+        }
+
+        input[type=text].error, input[type=password].error, textarea.error {
+            border-color: red;
+            background-color: #ffe6e6;
+        }
+
+
+        .messageArea {
+            float: left;
+
+            .message {
+                color: red;
+            }
+
+            .message.success {
+                color: green;
+            }
+        }
+    }
+}
+

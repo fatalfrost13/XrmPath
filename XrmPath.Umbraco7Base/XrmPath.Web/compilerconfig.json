@@ -1,0 +1,22 @@
+﻿[
+  {
+    "outputFile": "css/style.css",
+    "inputFile": "css/style.less"
+  },
+  {
+    "outputFile": "css/macros.css",
+    "inputFile": "css/macros.less"
+  },
+  {
+    "outputFile": "css/variables.css",
+    "inputFile": "css/variables.less"
+  },
+  {
+    "outputFile": "css/buttons.css",
+    "inputFile": "css/buttons.less"
+  },
+  {
+    "outputFile": "css/site.css",
+    "inputFile": "css/site.less"
+  }
+]

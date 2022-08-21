@@ -1,0 +1,34 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+@using ClientDependency.Core.Mvc
+@using XrmPath.Web.Helpers.UmbracoHelpers
+
+@{
+	Layout = "Master.cshtml";
+	Html.RequiresCss("/css/Article-Clean.css");
+}
+
+@* the fun starts here *@
+@{
+	var showComments = Umbraco.AssignedContentItem.GetNodeBoolean("showComments");
+}
+
+<div class="article-clean">
+	<div class="container">
+		<div class="row">
+			<div class="col-lg-10 col-lg-offset-1 col-md-12">
+
+				@RenderBody()
+
+				<p>&nbsp;</p>
+
+			</div>
+		</div>
+
+		@if (showComments)
+		{
+			@Html.Partial("Comments")
+		}
+
+	</div>
+</div>
+

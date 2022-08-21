@@ -1,0 +1,19 @@
+﻿@inherits UmbracoViewPage
+@using XrmPath.Web.Helpers
+@using Umbraco.Web.Models
+
+@{
+    var metaData = PageHelper.GetMetaData(Model);
+}
+
+@*<title>@Umbraco.Field("metaName", altFieldAlias: "pageName")</title>
+<meta name="Name" content="@Umbraco.Field("metaName", altFieldAlias: "pageName")" />
+<meta name="Description" content="@Umbraco.Field("metaDescription", altFieldAlias: "pageName")" />
+<meta name="Keywords" content="@(Umbraco.AssignedContentItem.HasValue("metaKeywords") ? string.Join(",", Umbraco.AssignedContentItem.GetPropertyValue<string[]>("metaKeywords")) : Umbraco.AssignedContentItem.Name)" />*@
+
+
+<title>@metaData.Title</title>
+<meta name="Keywords" content="@metaData.Keywords" />
+<meta name="Description" content="@metaData.Description" />
+<meta name="Id" content="@Model.Id" />
+<meta name="DocumentTypeAlias" content="@Model.DocumentTypeAlias" />

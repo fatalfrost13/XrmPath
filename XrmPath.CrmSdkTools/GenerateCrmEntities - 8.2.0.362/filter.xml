@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<entities>
+  <entity>contact</entity>
+  <entity>lead</entity>
+  <entity>campaignactivity</entity>
+</entities>

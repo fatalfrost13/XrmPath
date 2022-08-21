@@ -1,0 +1,14 @@
+﻿[
+  {
+    "outputFile": "css/buttons.css",
+    "inputFile": "css/buttons.less"
+  },
+  {
+    "outputFile": "css/macros.css",
+    "inputFile": "css/macros.less"
+  },
+  {
+    "outputFile": "css/site.css",
+    "inputFile": "css/site.less"
+  }
+]
