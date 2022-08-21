@@ -4,8 +4,9 @@
 @using XrmPath.UmbracoCore.Models;
 @{
 	Layout = "master.cshtml";
-	Html.RequiresCss("/css/Article-Clean.css");
+	//Html.RequiresCss("/css/Article-Clean.css");
 }
+<link rel="stylesheet" href="/css/site.css?v=">
 
 @* the fun starts here *@
 @{
@@ -27,7 +28,7 @@
 
 		@if (showComments)
 		{
-			@Html.Partial("Comments")
+			@*@Html.Partial("Comments")*@
 		}
 
 	</div>
