@@ -324,7 +324,7 @@ build/
 !/XrmPath.Umbraco8Base/XrmPath.Web/Umbraco/**
 !/XrmPath.Umbraco8Base/XrmPath.Web/Umbraco_Client/**
 
-/XrmPath.Umbraco10Base/Deploy/*
+/XrmPath.Umbraco10Starter/Deploy/*
 
 *.orig
 *.tmp
