@@ -5,6 +5,8 @@ using XrmPath.UmbracoUtils.Models;
 using Umbraco.Cms.Web.Common;
 using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Core.Models.PublishedContent;
+using Examine.Lucene.Providers;
+using UmbracoExamine.PDF;
 
 namespace XrmPath.UmbracoUtils
 {
@@ -120,7 +122,6 @@ namespace XrmPath.UmbracoUtils
                 //throw new InvalidOperationException($"No index found with name {indexName}");
                 return null;
             }
-            
         }
 
         public decimal WeightedScore(IPublishedContent? content, decimal score, decimal applyMultiplier = 1)
