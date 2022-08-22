@@ -26,7 +26,7 @@ namespace XrmPath.UmbracoUtils.Models
         }
 
         //public static readonly string SearchableFields = $"title,bodyText,body,description,contentGrid,tags,metaName,metaDescription,metaKeywords,FileTextContent";
-        public static readonly string SearchableFields = $"{UmbracoCustomFields.Title},{UmbracoCustomFields.BodyText},{UmbracoCustomFields.Description},{UmbracoCustomFields.Grid},{UmbracoCustomFields.Tags},{UmbracoCustomFields.MetaDescription},{UmbracoCustomFields.MetaKeywords},{UmbracoCustomFields.FileTextContent}," +
+        public static readonly string SearchableFields = $"{UmbracoCustomFields.PageTitle},{UmbracoCustomFields.NavigationTitle},{UmbracoCustomFields.BodyText},{UmbracoCustomFields.Description},{UmbracoCustomFields.Grid},{UmbracoCustomFields.Tags},{UmbracoCustomFields.MetaDescription},{UmbracoCustomFields.MetaKeywords},{UmbracoCustomFields.FileTextContent}," +
             $"{UmbracoCustomFields.UserName},{UmbracoCustomFields.UserComment}";
         public static List<string> SearchableFieldsList
         {

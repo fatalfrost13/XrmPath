@@ -106,16 +106,21 @@ namespace XrmPath.UmbracoUtils
         {
             IIndex? index = null;
             var indexExists = _examineManager?.TryGetIndex(indexName, out index) ?? false;
-            if (!indexExists)
+           
+            if (indexExists)
             {
-                throw new InvalidOperationException($"No index found with name {indexName}");
+                var searcher = index?.Searcher;
+                IQuery? query = searcher?.CreateQuery(null, BooleanOperation.And);
+                //string searchFields = "nodeName,pageTitle,metaDescription,bodyText";
+                var searchFields = ConfigurationModel.SearchableFields;
+                IBooleanOperation? terms = query?.GroupedOr(searchFields.Split(','), searchTerm);
+                return terms?.Execute();
             }
-            var searcher = index?.Searcher;
-            IQuery? query = searcher?.CreateQuery(null, BooleanOperation.And);
-            //string searchFields = "nodeName,pageTitle,metaDescription,bodyText";
-            var searchFields = ConfigurationModel.SearchableFields;
-            IBooleanOperation? terms = query?.GroupedOr(searchFields.Split(','), searchTerm);
-            return terms?.Execute();
+            else {
+                //throw new InvalidOperationException($"No index found with name {indexName}");
+                return null;
+            }
+            
         }
 
         public decimal WeightedScore(IPublishedContent? content, decimal score, decimal applyMultiplier = 1)
@@ -169,7 +174,7 @@ namespace XrmPath.UmbracoUtils
                     var searchResultId = int.Parse(searchResult.Id);
                     var searchNode = _umbracoHelper?.Content(searchResultId);
                     //if (SearchableDocTypes.Contains(searchResult.Fields["nodeTypeAlias"]) &&
-                    if (ConfigurationModel.SearchableContentTypesList.Contains(documentType) && resultItems.All(i => i.Id.ToString() != searchResult.Id))
+                    if (documentType != null && ConfigurationModel.SearchableContentTypesList.Contains(documentType) && resultItems.All(i => i.Id.ToString() != searchResult.Id))
                     {
                         var score = Convert.ToDecimal(searchResult.Score);
                         var weightedScore = WeightedScore(searchNode, score);
