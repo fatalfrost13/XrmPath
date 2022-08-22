@@ -1,4 +1,5 @@
-﻿using Microsoft.IdentityModel.Logging;
+﻿using Examine;
+using Microsoft.IdentityModel.Logging;
 using Newtonsoft.Json;
 using Umbraco.Cms.Core.Models;
 using Umbraco.Cms.Core.Models.PublishedContent;
@@ -15,7 +16,7 @@ namespace XrmPath.UmbracoUtils
     {
 
         private readonly MultiUrlUtility _urlUtil;
-        public PublishedContentUtility(UmbracoHelper? umbracoHelper = null, IMediaService? mediaService = null) : base(umbracoHelper, mediaService)
+        public PublishedContentUtility(UmbracoHelper? umbracoHelper = null, IMediaService? mediaService = null, IExamineManager? examineManager = null) : base(umbracoHelper, mediaService, examineManager)
         {
             _urlUtil = new MultiUrlUtility(this);
         }
@@ -26,6 +27,10 @@ namespace XrmPath.UmbracoUtils
         public IMediaService? GetMediaService()
         {
             return _mediaService;
+        }
+        public IExamineManager? GetExamineManager()
+        {
+            return _examineManager;
         }
 
         public bool NodeExists(IPublishedContent? content)
@@ -141,7 +146,7 @@ namespace XrmPath.UmbracoUtils
             return strTitle ?? "";
         }
 
-        public decimal GetNodeDecimal(IPublishedContent content, string alias, decimal defaultValue = 0)
+        public decimal GetNodeDecimal(IPublishedContent? content, string alias, decimal defaultValue = 0)
         {
             var decValue = defaultValue;
             var contentValue = GetContentValue(content, alias);

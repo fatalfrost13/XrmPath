@@ -1,4 +1,5 @@
-﻿using Umbraco.Cms.Core.Services;
+﻿using Examine;
+using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Web.Common;
 
 namespace XrmPath.Web.UmbracoUtils
@@ -7,13 +8,18 @@ namespace XrmPath.Web.UmbracoUtils
     {
         protected readonly UmbracoHelper? _umbracoHelper;
         protected readonly IMediaService? _mediaService;
-        public BaseUtility(UmbracoHelper? umbracoHelper, IMediaService? mediaService)
+        protected readonly IExamineManager? _examineManager;
+        public BaseUtility(UmbracoHelper? umbracoHelper, IMediaService? mediaService, IExamineManager? examineManager)
         {
-            if (umbracoHelper != null) {
+            if (umbracoHelper != null && _umbracoHelper == null) {
                 _umbracoHelper = umbracoHelper;
             }
-            if (mediaService != null) {
+            if (mediaService != null && _mediaService == null) {
                 _mediaService = mediaService;
+            }
+            if (examineManager != null && _examineManager == null)
+            {
+                _examineManager = examineManager;
             }
         }
     }
