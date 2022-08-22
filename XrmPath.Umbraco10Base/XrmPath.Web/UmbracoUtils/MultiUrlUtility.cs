@@ -10,13 +10,15 @@ namespace XrmPath.UmbracoUtils
     public class MultiUrlUtility
     {
         private readonly PublishedContentUtility _pcUtil;
+        private readonly UmbracoHelper? _umbracoHelper;
         public MultiUrlUtility(PublishedContentUtility pcUtil) { 
-            _pcUtil = pcUtil; 
+            _pcUtil = pcUtil;
+            _umbracoHelper = _pcUtil.GetUmbracoHelper();
         }
 
         public UrlPicker GetUrlPicker(int nodeId, string alias = "urlPicker")
         {
-            var content = _pcUtil.GetContentById(nodeId);
+            var content = _umbracoHelper?.Content(nodeId);
             return GetUrlPicker(content, alias);
         }
 
@@ -35,9 +37,9 @@ namespace XrmPath.UmbracoUtils
                     {
                         firstLink = (Link)obj;
                     }
-                    else
+                    else if (obj != null)
                     {
-                        links = (List<Link>)obj ?? new List<Link>();
+                        links = (List<Link>)obj;
                         if (links.Any())
                         {
                             firstLink = links.FirstOrDefault();
@@ -59,7 +61,7 @@ namespace XrmPath.UmbracoUtils
                         Title = firstLink?.Name ?? "",
                         LinkType = firstLink?.Type ?? LinkType.Content,
                         NewWindow = firstLink?.Target == "_blank",
-                        NodeId = _pcUtil.GetIdFromLink(firstLink),
+                        NodeId = GetIdFromLink(firstLink),
                         Url = url
                     };
 
@@ -91,12 +93,12 @@ namespace XrmPath.UmbracoUtils
             return urlPicker;
         }
 
-        public string UrlPickerLink(IPublishedContent navContent, string urlPickerAlias, string property = "")
+        public string UrlPickerLink(IPublishedContent? navContent, string urlPickerAlias, string property = "")
         {
             var strTitle = "";
             var strTarget = "";
 
-            var navTitle = navContent.GetProperty(UmbracoCustomFields.NavigationTitle);
+            var navTitle = navContent?.GetProperty(UmbracoCustomFields.NavigationTitle);
             if (navTitle != null)
             {
                 strTitle = navTitle?.GetValue()?.ToString() ?? "";
@@ -150,6 +152,45 @@ namespace XrmPath.UmbracoUtils
             }
 
             return strLink;
+        }
+
+        public int GetIdFromLink(Link? item)
+        {
+            //var nodeId = item?.Id ?? 0;
+
+            var nodeId = 0;
+            try
+            {
+                if (item?.Udi != null)
+                {
+                    if (item.Type == LinkType.Content)
+                    {
+
+                        var node = _umbracoHelper?.Content(item.Udi);
+                        if (node != null && _pcUtil.NodeExists(node))
+                        {
+                            nodeId = node.Id;
+                        }
+                    }
+                    else if (item.Type == LinkType.Media)
+                    {
+                        var node = _umbracoHelper?.Media(item.Udi);
+                        if (node != null && _pcUtil.NodeExists(node))
+                        {
+                            nodeId = node.Id;
+                        }
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                //Serilog.Log.Error(ex, $"XrmPath.UmbracoCore caught error on PublishedContentUtility.GetIdFromLink(). URL Info: {UrlUtility.GetCurrentUrl()}");
+                //LogHelper.Error($"XrmPath.UmbracoCore caught error on PublishedContentUtility.GetIdFromLink(). URL Info: {UrlUtility.GetCurrentUrl()}", ex);
+            }
+
+            return nodeId;
         }
     }
 }

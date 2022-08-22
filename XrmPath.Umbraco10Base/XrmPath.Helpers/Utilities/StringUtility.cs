@@ -266,7 +266,7 @@ namespace XrmPath.Helpers.Utilities
             return formatCurrency;
         }
 
-        public static string GetExtensionFromRelativeUrlPath(string url, string validExtensions = "png,jpg,jpeg,png8,gif")
+        public static string GetExtensionFromRelativeUrlPath(string? url, string validExtensions = "png,jpg,jpeg,png8,gif")
         {
             var extension = url;
             if (extension.IndexOf("?", StringComparison.Ordinal) > -1)

@@ -17,10 +17,10 @@ namespace XrmPath.Helpers.Model
         public decimal ValueDecimal { get; set; }    //any numeric value
     }
 
-    public class MediaItem
-    {
-        public int Id { get; set; } 
-        public string Name { get; set; } = "";
-        public string Url { get; set; } = "";   
-    }
+    //public class MediaItem
+    //{
+    //    public int Id { get; set; } 
+    //    public string Name { get; set; } = "";
+    //    public string Url { get; set; } = "";   
+    //}
 }
