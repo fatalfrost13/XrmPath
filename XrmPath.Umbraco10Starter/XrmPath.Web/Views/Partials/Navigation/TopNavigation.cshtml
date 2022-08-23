@@ -3,13 +3,15 @@
 @using XrmPath.UmbracoCore.Utilities
 @using Umbraco.Cms.Core.Services;
 @using Umbraco.Cms.Web.Common;
+@using Microsoft.Extensions.Logging;
 
 @*@inject IMediaService MediaService*@
 @inject UmbracoHelper umbracoHelper
+@inject ILogger<object> iLogger
 
 @inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
 @{
-    var pUtil = new PublishedContentUtility(umbracoHelper);
+    var pUtil = new PublishedContentUtility(iLogger, umbracoHelper);
     var site = Model.Root();
     var selection = site?.Children?.Where(x => x.IsVisible()) ?? Enumerable.Empty<IPublishedContent>();
 }

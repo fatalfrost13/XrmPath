@@ -16,9 +16,9 @@ namespace XrmPath.Web.Controllers
         //private readonly UmbracoHelper? _umbracoHelper;
         //private readonly IMediaService? _mediaService;
 
-        public SearchController(UmbracoHelper umbracoHelper, IMediaService mediaService, IExamineManager examineIndex) {
+        public SearchController(ILogger<object> iLogger, UmbracoHelper umbracoHelper, IMediaService mediaService, IExamineManager examineIndex) {
             if (_pcUtil == null) {
-                _pcUtil = new PublishedContentUtility(umbracoHelper, mediaService, examineIndex);
+                _pcUtil = new PublishedContentUtility(iLogger, umbracoHelper, mediaService, examineIndex);
                 _searchUtil = new SearchUtility(_pcUtil);
             }
         }

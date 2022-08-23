@@ -1,4 +1,5 @@
 ﻿using Examine;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Web.Common;
@@ -9,13 +10,18 @@ namespace XrmPath.UmbracoCore.Utilities
     public abstract class BaseUtility
     {
         protected readonly UmbracoHelper? _umbracoHelper;
+        protected readonly ILogger<object>? _iLogger;
         protected readonly IMediaService? _mediaService;
         protected readonly IExamineManager? _examineManager;
         protected readonly IContentService? _contentService;
         protected readonly IContentTypeService? _contentTypeService;
         protected readonly IOptions<AppSettingsModel>? _appSettings;
-        public BaseUtility(UmbracoHelper? umbracoHelper, IMediaService? mediaService, IExamineManager? examineManager, IContentService? contentService, IContentTypeService? contentTypeService, IOptions<AppSettingsModel>? appSettings)
+        public BaseUtility(ILogger<object>? iLogger, UmbracoHelper? umbracoHelper, IMediaService? mediaService, IExamineManager? examineManager, IContentService? contentService, IContentTypeService? contentTypeService, IOptions<AppSettingsModel>? appSettings)
         {
+            if (iLogger != null && _iLogger == null)
+            {
+                _iLogger = iLogger;
+            }
             if (umbracoHelper != null && _umbracoHelper == null)
             {
                 _umbracoHelper = umbracoHelper;

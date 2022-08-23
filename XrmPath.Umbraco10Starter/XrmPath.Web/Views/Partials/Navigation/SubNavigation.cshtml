@@ -5,12 +5,14 @@
 @using XrmPath.UmbracoCore.Utilities
 @using Umbraco.Cms.Core.Services;
 @using Umbraco.Cms.Web.Common;
+@using Microsoft.Extensions.Logging;
 
 @inject IPublishedValueFallback PublishedValueFallback
 @*@inject IPublishedUrlProvider PublishedUrlProvider*@
 @inject UmbracoHelper umbracoHelper
+@inject ILogger<object> iLogger
 @{
-    var pUtil = new PublishedContentUtility(umbracoHelper);
+    var pUtil = new PublishedContentUtility(iLogger, umbracoHelper);
     var siteSection = Model.AncestorOrSelf(2);
     var selection = siteSection?.Children?.Where(x => x.IsVisible(PublishedValueFallback)) ?? Enumerable.Empty<IPublishedContent>();
 }

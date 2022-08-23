@@ -1,4 +1,5 @@
 ﻿using Examine;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Umbraco.Cms.Core.Models.PublishedContent;
@@ -14,12 +15,20 @@ namespace XrmPath.UmbracoCore.Utilities
 
         protected MultiUrlUtility _urlUtil;
         protected ContentUtility? _contentUtil;
-        public PublishedContentUtility(UmbracoHelper? umbracoHelper = null, IMediaService? mediaService = null, IExamineManager? examineManager = null, IContentService? contentService = null, IContentTypeService? contentTypeService = null, IOptions<AppSettingsModel>? appSettings = null) 
-            : base(umbracoHelper, mediaService, examineManager, contentService, contentTypeService, appSettings)
+        protected LoggingUtility? _loggingUtil;
+        public PublishedContentUtility(ILogger<object>? iLogger = null, UmbracoHelper? umbracoHelper = null, IMediaService? mediaService = null, IExamineManager? examineManager = null, IContentService? contentService = null, IContentTypeService? contentTypeService = null, IOptions<AppSettingsModel>? appSettings = null) 
+            : base(iLogger, umbracoHelper, mediaService, examineManager, contentService, contentTypeService, appSettings)
         {
             _urlUtil = new MultiUrlUtility(this);
         }
-
+        public LoggingUtility? GetLoggingUtility()
+        {
+            if (_loggingUtil == null && _iLogger != null)
+            {
+                _loggingUtil = new LoggingUtility(_iLogger);
+            }
+            return _loggingUtil;
+        }
         public UmbracoHelper? GetUmbracoHelper() {
             return _umbracoHelper;
         }
@@ -43,6 +52,7 @@ namespace XrmPath.UmbracoCore.Utilities
         {
             return _urlUtil;
         }
+        
         public ContentUtility? GetContentUtility()
         {
             if (_contentUtil == null) {
