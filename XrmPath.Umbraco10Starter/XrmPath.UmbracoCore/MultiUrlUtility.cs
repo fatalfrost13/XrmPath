@@ -9,22 +9,13 @@ namespace XrmPath.UmbracoCore.Utilities
 {
     public class MultiUrlUtility: BaseInitializer
     {
-        private readonly UmbracoHelper? _umbracoHelper;
-
         public MultiUrlUtility(ServiceUtility? serviceUtil) : base(serviceUtil)
         {
-            if (_serviceUtil == null && serviceUtil != null)
-            {
-                _serviceUtil = serviceUtil;
-            }
-            if (_umbracoHelper == null) {
-                _umbracoHelper = _serviceUtil?.GetUmbracoHelper();
-            }
         }
 
         public UrlPicker GetUrlPicker(int nodeId, string alias = "urlPicker")
         {
-            var content = _umbracoHelper?.Content(nodeId);
+            var content = umbracoHelper?.Content(nodeId);
             return GetUrlPicker(content, alias);
         }
 
@@ -248,7 +239,7 @@ namespace XrmPath.UmbracoCore.Utilities
                     if (item.Type == LinkType.Content)
                     {
 
-                        var node = _umbracoHelper?.Content(item.Udi);
+                        var node = umbracoHelper?.Content(item.Udi);
                         if ((node != null && pcUtil != null) && pcUtil.NodeExists(node))
                         {
                             nodeId = node.Id;
@@ -256,7 +247,7 @@ namespace XrmPath.UmbracoCore.Utilities
                     }
                     else if (item.Type == LinkType.Media)
                     {
-                        var node = _umbracoHelper?.Media(item.Udi);
+                        var node = umbracoHelper?.Media(item.Udi);
                         if ((node != null && pcUtil != null) && pcUtil.NodeExists(node))
                         {
                             nodeId = node.Id;

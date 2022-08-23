@@ -10,18 +10,8 @@ namespace XrmPath.UmbracoCore.Utilities
 {
     public class MediaUtility: BaseInitializer
     {
-        private readonly UmbracoHelper? _umbracoHelper;
-        private readonly IMediaService? _mediaService;
         public MediaUtility(ServiceUtility? serviceUtil): base(serviceUtil)
         {
-            if (_umbracoHelper == null)
-            {
-                _umbracoHelper = _serviceUtil?.GetUmbracoHelper();
-            }
-            if (_mediaService == null)
-            {
-                _mediaService = _serviceUtil?.GetMediaService();
-            }
         }
 
         public MediaItem? GetMediaItem(int id)
@@ -32,7 +22,7 @@ namespace XrmPath.UmbracoCore.Utilities
                 //this pulls from lucene index
 
                 //var umbracoHelper = Umbraco.Web.Composing.Current.UmbracoHelper;
-                var typeMediaItem = _umbracoHelper?.Media(id);
+                var typeMediaItem = umbracoHelper?.Media(id);
                 //var publishedMediaItem = new MediaValues(typeMediaItem);
                 if (typeMediaItem != null && (pcUtil?.NodeExists(typeMediaItem) ?? false))
                 {
@@ -49,7 +39,7 @@ namespace XrmPath.UmbracoCore.Utilities
                 {
                     //lastly if we can't pull it from cache, we'll use the database service umbraco.library.
                     //according to https://shazwazza.com/post/ultra-fast-media-performance-in-umbraco/ results are cached so it only makes db call the first time.
-                    var media = _mediaService?.GetById(id);
+                    var media = mediaService?.GetById(id);
                     if (media != null)
                     {
                         var mediaItem = new MediaItem
@@ -82,7 +72,7 @@ namespace XrmPath.UmbracoCore.Utilities
             //var id = ServiceUtility.UmbracoHelper.GetIdForUdi(udi);
             //var id = ServiceUtility.UmbracoHelper.Media(udi)?.Id ?? 0;
 
-            var id = udi != null ? _umbracoHelper?.Media(udi)?.Id ?? 0 : 0;
+            var id = udi != null ? umbracoHelper?.Media(udi)?.Id ?? 0 : 0;
             if (id > 0)
             {
                 var mediaItem = GetMediaItem(id);
@@ -141,7 +131,7 @@ namespace XrmPath.UmbracoCore.Utilities
             {
 
                 //get from database
-                var m = _mediaService?.GetById(nodeid);
+                var m = mediaService?.GetById(nodeid);
                 if (m != null && m.Id > 0 && m.HasProperty(alias))
                 {
                     path = m.GetValue(alias) != null ? m.GetValue(alias)?.ToString() : string.Empty;
@@ -173,7 +163,7 @@ namespace XrmPath.UmbracoCore.Utilities
                 var jsonValue = pcUtil?.GetContentValue(node, alias);
                 if (!string.IsNullOrEmpty(jsonValue))
                 {
-                    var publishedContent = _umbracoHelper?.Content(node.Id);
+                    var publishedContent = umbracoHelper?.Content(node.Id);
                     cropUrl = publishedContent != null ? publishedContent.GetCropUrl(alias, cropAlias) : string.Empty;
 
                     if (!string.IsNullOrEmpty(renderAsExtension))

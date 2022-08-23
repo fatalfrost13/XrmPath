@@ -11,27 +11,8 @@ namespace XrmPath.UmbracoCore.Utilities
 {
     public class SearchUtility: BaseInitializer
     {
-        private readonly UmbracoHelper? _umbracoHelper;
-        private readonly IMediaService? _mediaService;
-        private readonly IExamineManager? _examineManager;
         public SearchUtility(ServiceUtility serviceUtil) : base(serviceUtil)
         {
-            if (_serviceUtil == null && serviceUtil != null)
-            {
-                _serviceUtil = serviceUtil; 
-            }
-            if (_umbracoHelper == null)
-            {
-                _umbracoHelper = _serviceUtil?.GetUmbracoHelper();
-            }
-            if (_mediaService == null)
-            {
-                _mediaService = _serviceUtil?.GetMediaService();
-            }
-            if (_examineManager == null)
-            {
-                _examineManager = _serviceUtil?.GetExamineManager();
-            }
         }
 
         /// <summary>
@@ -100,7 +81,7 @@ namespace XrmPath.UmbracoCore.Utilities
         private ISearchResults? QuerySearchIndex(string searchTerm, string indexName = "ExternalIndex")
         {
             IIndex? index = null;
-            var indexExists = _examineManager?.TryGetIndex(indexName, out index) ?? false;
+            var indexExists = examineManager?.TryGetIndex(indexName, out index) ?? false;
            
             if (indexExists)
             {
@@ -166,7 +147,7 @@ namespace XrmPath.UmbracoCore.Utilities
                 { 
                     //only pull certain records
                     var searchResultId = int.Parse(searchResult.Id);
-                    var searchNode = _umbracoHelper?.Content(searchResultId);
+                    var searchNode = umbracoHelper?.Content(searchResultId);
                     //if (SearchableDocTypes.Contains(searchResult.Fields["nodeTypeAlias"]) &&
                     if (documentType != null && ConfigurationModel.SearchableContentTypesList.Contains(documentType) && resultItems.All(i => i.Id.ToString() != searchResult.Id))
                     {
@@ -214,7 +195,7 @@ namespace XrmPath.UmbracoCore.Utilities
                         var topLevelNodeId = FindTopLevelNodeId(searchResultId);
                         if (topLevelNodeId > 0)
                         {
-                            var topLevelNode = _umbracoHelper?.Content(topLevelNodeId);
+                            var topLevelNode = umbracoHelper?.Content(topLevelNodeId);
                             var resultItemCount = resultItems.Count(i => i.Id == topLevelNodeId);
                             var score = Convert.ToDecimal(searchResult.Score);
                             var weightedScore = WeightedScore(topLevelNode, score);
@@ -353,7 +334,7 @@ namespace XrmPath.UmbracoCore.Utilities
         {
             var searchUrl = "";
             var nodeId = int.Parse(searchResult.Id);
-            var node = _umbracoHelper?.Content(nodeId);
+            var node = umbracoHelper?.Content(nodeId);
             if (node?.Id > 0)
             {
                 searchUrl = pcUtil?.GetUrl(node) ?? "";
@@ -399,7 +380,7 @@ namespace XrmPath.UmbracoCore.Utilities
         {
             var exitLoop = false;
             var topNodeId = 0;
-            var topNode = _umbracoHelper?.Content(id);
+            var topNode = umbracoHelper?.Content(id);
 
             if (topNode == null) {
                 return 0;
@@ -419,7 +400,7 @@ namespace XrmPath.UmbracoCore.Utilities
                     //keep looking up at the parent directory
                     if (topNode.Parent != null && topNode.Parent.Id > 0)
                     {
-                        topNode = _umbracoHelper?.Content(topNode.Parent.Id);
+                        topNode = umbracoHelper?.Content(topNode.Parent.Id);
                     }
                     else
                     {

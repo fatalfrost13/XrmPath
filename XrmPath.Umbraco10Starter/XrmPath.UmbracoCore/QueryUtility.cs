@@ -7,17 +7,8 @@ namespace XrmPath.UmbracoCore.Utilities
 {
     public class QueryUtility: BaseInitializer
     {
-        protected readonly UmbracoHelper? _umbracoHelper;
         public QueryUtility(ServiceUtility serviceUtil) : base(serviceUtil)
         {
-            if (_serviceUtil == null && serviceUtil != null)
-            {
-                _serviceUtil = serviceUtil;
-            }
-            if (_umbracoHelper == null)
-            {
-                _umbracoHelper = _serviceUtil?.GetUmbracoHelper();
-            }
         }
 
         /// <summary>
@@ -26,7 +17,7 @@ namespace XrmPath.UmbracoCore.Utilities
         /// <returns></returns>
         public IEnumerable<IPublishedContent> GetPublishedContentByTypeSingle(string alias = "")
         {
-            var nodeList = !string.IsNullOrEmpty(alias) ? _umbracoHelper?.ContentAtXPath($"//{alias}") : Enumerable.Empty<IPublishedContent>();
+            var nodeList = !string.IsNullOrEmpty(alias) ? umbracoHelper?.ContentAtXPath($"//{alias}") : Enumerable.Empty<IPublishedContent>();
             return nodeList ?? Enumerable.Empty<IPublishedContent>();
         }
 
@@ -47,7 +38,7 @@ namespace XrmPath.UmbracoCore.Utilities
             if (string.IsNullOrEmpty(aliases))
             {
                 var nodeList = new List<IPublishedContent>();
-                var rootNodes = _umbracoHelper?.ContentAtRoot();
+                var rootNodes = umbracoHelper?.ContentAtRoot();
                 if (rootNodes != null) {
                     foreach (var rootNode in rootNodes)
                     {

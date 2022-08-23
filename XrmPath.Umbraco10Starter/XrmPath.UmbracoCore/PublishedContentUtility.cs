@@ -12,12 +12,8 @@ namespace XrmPath.UmbracoCore.Utilities
 {
     public class PublishedContentUtility: BaseInitializer
     {
-        protected UmbracoHelper? _umbracoHelper;
         public PublishedContentUtility(ServiceUtility? serviceUtil) : base(serviceUtil)
         {
-            if (_umbracoHelper == null) {
-                _umbracoHelper = _serviceUtil?.GetUmbracoHelper();
-            }
         }
 
         public bool NodeExists(IPublishedContent? content)
@@ -223,9 +219,9 @@ namespace XrmPath.UmbracoCore.Utilities
 
         public IEnumerable<IPublishedContent?> GetNodeList(ISet<int> intList)
         {
-            if (intList.Any() && _umbracoHelper != null)
+            if (intList.Any() && umbracoHelper != null)
             {
-                var nodeList = intList.Select(i => _umbracoHelper.Content(i)).Where(i => NodeExists(i));
+                var nodeList = intList.Select(i => umbracoHelper.Content(i)).Where(i => NodeExists(i));
                 return nodeList;
             }
             return Enumerable.Empty<IPublishedContent>();

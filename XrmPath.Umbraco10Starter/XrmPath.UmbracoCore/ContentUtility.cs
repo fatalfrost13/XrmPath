@@ -13,28 +13,13 @@ namespace XrmPath.UmbracoCore.Utilities
 
     public class ContentUtility: BaseInitializer
     {
-        private readonly UmbracoHelper? _umbracoHelper;
-        private readonly IContentService? _contentService;
-        protected readonly IContentTypeService? _contentTypeService;
         public ContentUtility(ServiceUtility? serviceUtil): base(serviceUtil)
         {
-            if (_umbracoHelper == null)
-            {
-                _umbracoHelper = _serviceUtil?.GetUmbracoHelper();
-            }
-            if (_contentService == null)
-            {
-                _contentService = _serviceUtil?.GetContentService();
-            }
-            if (_contentTypeService == null)
-            {
-                _contentTypeService = _serviceUtil?.GetContentServiceType();
-            }
         }
 
         public IEnumerable<IContentType> GetContentTypes()
         {
-            var contentTypes = _contentTypeService?.GetAll();
+            var contentTypes = contentTypeService?.GetAll();
             return contentTypes ?? Enumerable.Empty<IContentType>();
         }
 
@@ -109,7 +94,7 @@ namespace XrmPath.UmbracoCore.Utilities
         {
             if (NodeExists(content) && content.Published)
             {
-                var publishedContent = _umbracoHelper?.Content(content.Id);
+                var publishedContent = umbracoHelper?.Content(content.Id);
                 if (pcUtil?.NodeExists(publishedContent) ?? false)
                 {
                     return publishedContent;
@@ -171,7 +156,7 @@ namespace XrmPath.UmbracoCore.Utilities
         }
 
         public IEnumerable<IContent> GetChildren(IContent content) {
-            var children = _contentService?.GetPagedChildren(content.Id, 1, 1000, out long totalRecords);
+            var children = contentService?.GetPagedChildren(content.Id, 1, 1000, out long totalRecords);
             return children ?? Enumerable.Empty<IContent>();
         }
 
@@ -348,7 +333,7 @@ namespace XrmPath.UmbracoCore.Utilities
                             var validId = int.TryParse(idValue, out id);
                             if (validId && id > 0)
                             {
-                                var node = _contentService?.GetById(id);
+                                var node = contentService?.GetById(id);
                                 if (NodeExists(node) && node != null)
                                 {
                                     nodeList.Add(node);
@@ -367,10 +352,10 @@ namespace XrmPath.UmbracoCore.Utilities
                             Udi udi = Udi.Create(udiValue);
                             if (udi != null)
                             { 
-                                var id = _umbracoHelper?.Content(udi)?.Id ?? 0;
+                                var id = umbracoHelper?.Content(udi)?.Id ?? 0;
                                 if (id > 0)
                                 {
-                                    var contentPicker = _contentService?.GetById(id);
+                                    var contentPicker = contentService?.GetById(id);
                                     if (NodeExists(contentPicker) && contentPicker != null)
                                     {
                                         nodeList.Add(contentPicker);
@@ -396,7 +381,7 @@ namespace XrmPath.UmbracoCore.Utilities
         {
             if (intList.Any())
             {
-                return intList.Select(i => _contentService?.GetById(i)).Where(i => NodeExists(i));
+                return intList.Select(i => contentService?.GetById(i)).Where(i => NodeExists(i));
             }
             return Enumerable.Empty<IContent>();
         }

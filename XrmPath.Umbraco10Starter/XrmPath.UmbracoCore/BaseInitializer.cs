@@ -18,10 +18,37 @@ namespace XrmPath.UmbracoCore.Utilities
         protected ContentUtility? _contentUtil;
         protected LoggingUtility? _loggingUtil;
         protected MediaUtility? _mediaUtil;
+
+        protected UmbracoHelper? umbracoHelper;
+        protected IExamineManager? examineManager;
+        protected IMediaService? mediaService;
+        protected IContentService? contentService;
+        protected IContentTypeService? contentTypeService;
+
         public BaseInitializer(ServiceUtility? serviceUtil) {
             if (_serviceUtil == null && serviceUtil != null)
             {
                 _serviceUtil = serviceUtil;
+            }
+            if (umbracoHelper == null)
+            {
+                umbracoHelper = _serviceUtil?.GetUmbracoHelper();
+            }
+            if (mediaService == null)
+            {
+                mediaService = _serviceUtil?.GetMediaService();
+            }
+            if (examineManager == null)
+            {
+                examineManager = _serviceUtil?.GetExamineManager();
+            }
+            if (contentService == null)
+            {
+                contentService = _serviceUtil?.GetContentService();
+            }
+            if (contentTypeService == null)
+            {
+                contentTypeService = _serviceUtil?.GetContentServiceType();
             }
         }
         
