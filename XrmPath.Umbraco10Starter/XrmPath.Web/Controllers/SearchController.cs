@@ -11,15 +11,18 @@ namespace XrmPath.Web.Controllers
     public class SearchController : Controller
     {
         //private readonly IExamineManager _examineIndex;
+        private readonly ServiceUtility? _serviceUtil;
         private readonly SearchUtility? _searchUtil;
-        private readonly PublishedContentUtility _pcUtil;
+        private readonly PublishedContentUtility? _pcUtil;
         //private readonly UmbracoHelper? _umbracoHelper;
         //private readonly IMediaService? _mediaService;
 
         public SearchController(ILogger<object> iLogger, UmbracoHelper umbracoHelper, IMediaService mediaService, IExamineManager examineIndex) {
-            if (_pcUtil == null) {
-                _pcUtil = new PublishedContentUtility(iLogger, umbracoHelper, mediaService, examineIndex);
-                _searchUtil = new SearchUtility(_pcUtil);
+
+            if (_serviceUtil == null) {
+                _serviceUtil = new ServiceUtility(iLogger, umbracoHelper, mediaService, examineIndex);
+                _pcUtil = _serviceUtil?.GetPublishedContentUtility();
+                _searchUtil = _serviceUtil?.GetSearchUtility();
             }
         }
 

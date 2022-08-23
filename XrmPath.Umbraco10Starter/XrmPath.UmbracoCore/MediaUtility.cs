@@ -10,14 +10,35 @@ namespace XrmPath.UmbracoCore.Utilities
 {
     public class MediaUtility
     {
-        private readonly PublishedContentUtility _pcUtil;
+        private readonly ServiceUtility? _serviceUtil;
+        private PublishedContentUtility? _pcUtil;
         private readonly UmbracoHelper? _umbracoHelper;
         private readonly IMediaService? _mediaService;
-        public MediaUtility(PublishedContentUtility pcUtil)
+        public MediaUtility(ServiceUtility? serviceUtil)
         {
-            _pcUtil = pcUtil;
-            _umbracoHelper = _pcUtil.GetUmbracoHelper();
-            _mediaService = _pcUtil.GetMediaService();
+            if (_serviceUtil == null && serviceUtil != null)
+            {
+                _serviceUtil = serviceUtil;
+            }
+            if (_umbracoHelper == null)
+            {
+                _umbracoHelper = _serviceUtil?.GetUmbracoHelper();
+            }
+            if (_mediaService == null)
+            {
+                _mediaService = _serviceUtil?.GetMediaService();
+            }
+        }
+        private PublishedContentUtility? pcUtil
+        {
+            get
+            {
+                if (_pcUtil == null)
+                {
+                    _pcUtil = _serviceUtil?.GetPublishedContentUtility();
+                }
+                return _pcUtil;
+            }
         }
 
         public MediaItem? GetMediaItem(int id)
@@ -30,11 +51,11 @@ namespace XrmPath.UmbracoCore.Utilities
                 //var umbracoHelper = Umbraco.Web.Composing.Current.UmbracoHelper;
                 var typeMediaItem = _umbracoHelper?.Media(id);
                 //var publishedMediaItem = new MediaValues(typeMediaItem);
-                if (typeMediaItem != null && _pcUtil.NodeExists(typeMediaItem))
+                if (typeMediaItem != null && (pcUtil?.NodeExists(typeMediaItem) ?? false))
                 {
                     var mediaItem = new MediaItem
                     {
-                        Id = typeMediaItem.Id,
+                        Id = typeMediaItem?.Id ?? 0,
                         Url = typeMediaItem?.Url() ?? "",
                         Name = typeMediaItem?.Name ?? ""
                     };
@@ -161,12 +182,12 @@ namespace XrmPath.UmbracoCore.Utilities
         /// <param name="cropAlias">Crop alias</param>
         /// <param name="renderAsExtension">Extension (Ex. png) if different from uploaded</param>
         /// <returns></returns>
-        public string GetMediaCropUrl(IPublishedContent node, string alias, string cropAlias, string renderAsExtension = "")
+        public string? GetMediaCropUrl(IPublishedContent node, string alias, string cropAlias, string renderAsExtension = "")
         {
             var cropUrl = string.Empty;
             try
             {
-                var jsonValue = _pcUtil.GetContentValue(node, alias);
+                var jsonValue = pcUtil?.GetContentValue(node, alias);
                 if (!string.IsNullOrEmpty(jsonValue))
                 {
                     var publishedContent = _umbracoHelper?.Content(node.Id);
@@ -181,9 +202,9 @@ namespace XrmPath.UmbracoCore.Utilities
                         }
                     }
 
-                    var brightness = _pcUtil.GetNodeDecimal(node, UmbracoCustomFields.CropperBrightness);
-                    var contrast = _pcUtil.GetNodeDecimal(node, UmbracoCustomFields.CropperContrast);
-                    var saturation = _pcUtil.GetNodeDecimal(node, UmbracoCustomFields.CropperSaturation);
+                    var brightness = pcUtil?.GetNodeDecimal(node, UmbracoCustomFields.CropperBrightness);
+                    var contrast = pcUtil?.GetNodeDecimal(node, UmbracoCustomFields.CropperContrast);
+                    var saturation = pcUtil?.GetNodeDecimal(node, UmbracoCustomFields.CropperSaturation);
 
                     if (brightness != 0)
                     {
@@ -213,9 +234,9 @@ namespace XrmPath.UmbracoCore.Utilities
             var mediaList = new List<MediaItem>();
             try
             {
-                var files = _pcUtil.GetContentValue(content, alias);
+                var files = pcUtil?.GetContentValue(content, alias);
                 //mediaList = GetMediaList(files);
-                if (files.Contains("umb://"))
+                if (files != null && files.Contains("umb://"))
                 {
                     //Umbraco.MediaPicker2
                     var udisList = files.Split(',').ToList();
@@ -235,7 +256,7 @@ namespace XrmPath.UmbracoCore.Utilities
                 else
                 {
                     //Umbraco.MediaPicker
-                    var mediaIds = files.Split(',');
+                    var mediaIds = files?.Split(',') ?? Array.Empty<string>();
 
                     foreach (var mediaIdValue in mediaIds)
                     {

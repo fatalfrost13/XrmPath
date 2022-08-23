@@ -12,7 +12,8 @@
 @inject UmbracoHelper umbracoHelper
 @inject ILogger<object> iLogger
 @{
-    var pUtil = new PublishedContentUtility(iLogger, umbracoHelper);
+    var serviceUtil = new ServiceUtility(iLogger, umbracoHelper);
+    var pUtil = serviceUtil.GetPublishedContentUtility();
     var siteSection = Model.AncestorOrSelf(2);
     var selection = siteSection?.Children?.Where(x => x.IsVisible(PublishedValueFallback)) ?? Enumerable.Empty<IPublishedContent>();
 }
@@ -20,5 +21,5 @@
 @foreach (var item in selection)
 {
     @*<a class="nav-link nav-link--black nav-link--air-bottom @(item.IsAncestorOrSelf(Model) ? "nav-link--active" : null)" href="@item.Url(PublishedUrlProvider)">@item.Name</a>*@
-    <a class="nav-link nav-link--black nav-link--air-bottom @(item.IsAncestorOrSelf(Model) ? "nav-link--active" : null)" href="@pUtil.GetUrl(item)" target="@pUtil.GetTarget(item)">@pUtil.GetTitle(item)</a>
+    <a class="nav-link nav-link--black nav-link--air-bottom @(item.IsAncestorOrSelf(Model) ? "nav-link--active" : null)" href="@pUtil?.GetUrl(item)" target="@pUtil?.GetTarget(item)">@pUtil?.GetTitle(item)</a>
 }

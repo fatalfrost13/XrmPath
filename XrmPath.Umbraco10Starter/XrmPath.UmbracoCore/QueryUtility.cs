@@ -7,19 +7,30 @@ namespace XrmPath.UmbracoCore.Utilities
 {
     public class QueryUtility
     {
+        protected ServiceUtility? _serviceUtil;
         protected readonly UmbracoHelper? _umbracoHelper;
-        protected readonly PublishedContentUtility? _pcUtil;
-        public QueryUtility(PublishedContentUtility pcUtil)
+        protected PublishedContentUtility? _pcUtil;
+        public QueryUtility(ServiceUtility serviceUtil)
         {
-            if (pcUtil != null && _pcUtil == null)
+            if (_serviceUtil == null && serviceUtil != null)
             {
-                _pcUtil = pcUtil;
-                if (_umbracoHelper == null)
-                {
-                    _umbracoHelper = _pcUtil.GetUmbracoHelper();
-                }
+                _serviceUtil = serviceUtil;
             }
-            
+            if (_umbracoHelper == null)
+            {
+                _umbracoHelper = _serviceUtil?.GetUmbracoHelper();
+            }
+        }
+        private PublishedContentUtility? pcUtil
+        {
+            get
+            {
+                if (_pcUtil == null)
+                {
+                    _pcUtil = _serviceUtil?.GetPublishedContentUtility();
+                }
+                return _pcUtil;
+            }
         }
 
         /// <summary>
@@ -75,7 +86,7 @@ namespace XrmPath.UmbracoCore.Utilities
             }
             if (!string.IsNullOrEmpty(uniqueId))
             {
-                var uniquePage = GetPublishedContentByType(aliases).FirstOrDefault(i => _pcUtil?.GetContentValue(i, UmbracoCustomFields.UniqueId) == uniqueId);
+                var uniquePage = GetPublishedContentByType(aliases).FirstOrDefault(i => pcUtil?.GetContentValue(i, UmbracoCustomFields.UniqueId) == uniqueId);
                 return uniquePage;
 
             }
@@ -89,7 +100,7 @@ namespace XrmPath.UmbracoCore.Utilities
 
         public IPublishedContent? GetNodeByFieldValue(string docTypeAliases, string fieldAlias, string fieldValue)
         {
-            var nodeByFieldValue = GetPublishedContentByType(docTypeAliases).FirstOrDefault(i => !string.IsNullOrEmpty(fieldValue) && _pcUtil?.GetContentValue(i, fieldAlias) == fieldValue);
+            var nodeByFieldValue = GetPublishedContentByType(docTypeAliases).FirstOrDefault(i => !string.IsNullOrEmpty(fieldValue) && pcUtil?.GetContentValue(i, fieldAlias) == fieldValue);
             return nodeByFieldValue;
         }
     }

@@ -13,19 +13,52 @@ namespace XrmPath.UmbracoCore.Utilities
 
     public class ContentUtility
     {
-
-        private readonly PublishedContentUtility _pcUtil;
+        private readonly ServiceUtility? _serviceUtil;
+        private PublishedContentUtility? _pcUtil;
         private readonly UmbracoHelper? _umbracoHelper;
         private readonly IContentService? _contentService;
         protected readonly IContentTypeService? _contentTypeService;
-        private readonly MultiUrlUtility? _urlUtil;
-        public ContentUtility(PublishedContentUtility pcUtil)
+        private MultiUrlUtility? _urlUtil;
+        public ContentUtility(ServiceUtility? serviceUtil)
         {
-            _pcUtil = pcUtil;
-            _umbracoHelper = _pcUtil.GetUmbracoHelper();
-            _contentService = _pcUtil.GetContentService();
-            _contentTypeService = _pcUtil.GetContentServiceType();
-            _urlUtil = _pcUtil.GetMultiUrlUtility();
+            if (_serviceUtil == null && serviceUtil != null)
+            {
+                _serviceUtil = serviceUtil;  
+            }
+            if (_umbracoHelper == null)
+            {
+                _umbracoHelper = _serviceUtil?.GetUmbracoHelper();
+            }
+            if (_contentService == null)
+            {
+                _contentService = _serviceUtil?.GetContentService();
+            }
+            if (_contentTypeService == null)
+            {
+                _contentTypeService = _serviceUtil?.GetContentServiceType();
+            }
+        }
+        private PublishedContentUtility? pcUtil
+        {
+            get
+            {
+                if (_pcUtil == null)
+                {
+                    _pcUtil = _serviceUtil?.GetPublishedContentUtility();
+                }
+                return _pcUtil;
+            }
+        }
+        private MultiUrlUtility? urlUtil
+        {
+            get
+            {
+                if (_urlUtil == null)
+                {
+                    _urlUtil = _serviceUtil?.GetMultiUrlUtility();
+                }
+                return _urlUtil;
+            }
         }
 
         public IEnumerable<IContentType> GetContentTypes()
@@ -106,7 +139,7 @@ namespace XrmPath.UmbracoCore.Utilities
             if (NodeExists(content) && content.Published)
             {
                 var publishedContent = _umbracoHelper?.Content(content.Id);
-                if (_pcUtil.NodeExists(publishedContent))
+                if (pcUtil?.NodeExists(publishedContent) ?? false)
                 {
                     return publishedContent;
                 }
@@ -191,7 +224,7 @@ namespace XrmPath.UmbracoCore.Utilities
             if (content == null || content.Id == 0 || GetChildren(content) == null) return null;
             return GetChildren(content).FirstOrDefault(child => NodeExists(child) && string.Equals(nodeTypeAlias, child.ContentType.Alias, StringComparison.Ordinal));
         }
-        private IEnumerable<IContent> FindAllNodesByAlias(IContent content, ISet<string> nodeTypeAliasSet = null)
+        private IEnumerable<IContent> FindAllNodesByAlias(IContent content, ISet<string>? nodeTypeAliasSet = null)
         {
             if (content == null || content.Id == 0) yield break;
             if (nodeTypeAliasSet == null || nodeTypeAliasSet.Contains(content.ContentType.Alias)) yield return content;
@@ -396,7 +429,7 @@ namespace XrmPath.UmbracoCore.Utilities
             }
             return Enumerable.Empty<IContent>();
         }
-        public string GetContentColor(IContent content, string alias, string defaultColor = null)
+        public string GetContentColor(IContent content, string alias, string? defaultColor = null)
         {
             var color = !string.IsNullOrEmpty(GetContentValue(content, alias)) ? GetContentValue(content, alias) : null;
             if (color != null && !color.StartsWith("#"))
@@ -438,8 +471,8 @@ namespace XrmPath.UmbracoCore.Utilities
                 if (!string.IsNullOrWhiteSpace(urlPickerValue))
                 {
                     
-                    var urlPicker = _urlUtil?.GetUrlPicker(content, alias);
-                    strTarget = urlPicker.NewWindow ? "_blank" : "_self";
+                    var urlPicker = urlUtil?.GetUrlPicker(content, alias);
+                    strTarget = (urlPicker?.NewWindow ?? false) ? "_blank" : "_self";
                     if (strTarget.Trim().Contains("_blank"))
                     {
                         strTarget = "_blank";

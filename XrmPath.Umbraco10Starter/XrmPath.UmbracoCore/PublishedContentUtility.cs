@@ -10,57 +10,35 @@ using XrmPath.UmbracoCore.Models;
 
 namespace XrmPath.UmbracoCore.Utilities
 {
-    public class PublishedContentUtility: BaseUtility
+    public class PublishedContentUtility
     {
 
-        protected MultiUrlUtility _urlUtil;
+        protected ServiceUtility? _serviceUtil;
+        protected MultiUrlUtility? _urlUtil;
         protected ContentUtility? _contentUtil;
         protected LoggingUtility? _loggingUtil;
-        public PublishedContentUtility(ILogger<object>? iLogger = null, UmbracoHelper? umbracoHelper = null, IMediaService? mediaService = null, IExamineManager? examineManager = null, IContentService? contentService = null, IContentTypeService? contentTypeService = null, IOptions<AppSettingsModel>? appSettings = null) 
-            : base(iLogger, umbracoHelper, mediaService, examineManager, contentService, contentTypeService, appSettings)
+        protected UmbracoHelper? _umbracoHelper;
+        public PublishedContentUtility(ServiceUtility? serviceUtil)
         {
-            _urlUtil = new MultiUrlUtility(this);
-        }
-        public LoggingUtility? GetLoggingUtility()
-        {
-            if (_loggingUtil == null && _iLogger != null)
-            {
-                _loggingUtil = new LoggingUtility(_iLogger);
+            if (_serviceUtil == null && serviceUtil != null) {
+                _serviceUtil = serviceUtil;
             }
-            return _loggingUtil;
-        }
-        public UmbracoHelper? GetUmbracoHelper() {
-            return _umbracoHelper;
-        }
-        public IMediaService? GetMediaService()
-        {
-            return _mediaService;
-        }
-        public IExamineManager? GetExamineManager()
-        {
-            return _examineManager;
-        }
-        public IContentService? GetContentService()
-        {
-            return _contentService;
-        }
-        public IContentTypeService? GetContentServiceType()
-        {
-            return _contentTypeService;
-        }
-        public MultiUrlUtility? GetMultiUrlUtility()
-        {
-            return _urlUtil;
-        }
-        
-        public ContentUtility? GetContentUtility()
-        {
-            if (_contentUtil == null) {
-                _contentUtil = new ContentUtility(this);
+            if (_umbracoHelper == null) {
+                _umbracoHelper = _serviceUtil?.GetUmbracoHelper();
             }
-            return _contentUtil;
         }
 
+        private MultiUrlUtility? urlUtil
+        {
+            get
+            {
+                if (_urlUtil == null)
+                {
+                    _urlUtil = _serviceUtil?.GetMultiUrlUtility();
+                }
+                return _urlUtil;
+            }
+        }
 
         public bool NodeExists(IPublishedContent? content)
         {
@@ -115,7 +93,7 @@ namespace XrmPath.UmbracoCore.Utilities
                     var stringData = GetContentValue(content, alias);
                     if (!string.IsNullOrWhiteSpace(stringData))
                     {
-                        strUrl = _urlUtil.UrlPickerLink(content, alias, "Url");
+                        strUrl = urlUtil?.UrlPickerLink(content, alias, "Url");
                         if (string.IsNullOrWhiteSpace(strUrl))
                         {
                             strUrl = nodeUrl;
@@ -135,7 +113,7 @@ namespace XrmPath.UmbracoCore.Utilities
                 var stringData = GetContentValue(content, alias);
                 if (!string.IsNullOrWhiteSpace(stringData))
                 {
-                    strTarget = _urlUtil.UrlPickerLink(content, alias, "Target");
+                    strTarget = urlUtil?.UrlPickerLink(content, alias, "Target") ?? "";
                     if (strTarget.Trim().Contains("_blank"))
                     {
                         strTarget = "_blank";

@@ -11,32 +11,53 @@ namespace XrmPath.UmbracoCore.Utilities
 {
     public class SearchUtility
     {
-
-        private readonly PublishedContentUtility _pcUtil;
+        protected ServiceUtility? _serviceUtil;
+        private PublishedContentUtility? _pcUtil;
         private readonly UmbracoHelper? _umbracoHelper;
         private readonly IMediaService? _mediaService;
         private readonly IExamineManager? _examineManager;
-        private readonly MediaUtility? _mediaUtil;
-        public SearchUtility(PublishedContentUtility pcUtil)
+        private MediaUtility? _mediaUtil;
+        public SearchUtility(ServiceUtility serviceUtil)
         {
-            _pcUtil = pcUtil;
-
+            if (_serviceUtil == null && serviceUtil != null)
+            {
+                _serviceUtil = serviceUtil; 
+            }
             if (_umbracoHelper == null)
             {
-                _umbracoHelper = _pcUtil.GetUmbracoHelper();
+                _umbracoHelper = _serviceUtil?.GetUmbracoHelper();
             }
             if (_mediaService == null)
             {
-                _mediaService = _pcUtil.GetMediaService();
+                _mediaService = _serviceUtil?.GetMediaService();
             }
             if (_examineManager == null)
             {
-                _examineManager = _pcUtil.GetExamineManager();
+                _examineManager = _serviceUtil?.GetExamineManager();
             }
-            if (_mediaUtil == null)
-            {
-                _mediaUtil = new MediaUtility(pcUtil);
+        }
 
+        private PublishedContentUtility? pcUtil
+        {
+            get
+            {
+                if (_pcUtil == null)
+                {
+                    _pcUtil = _serviceUtil?.GetPublishedContentUtility();
+                }
+                return _pcUtil;
+            }
+        }
+
+        private MediaUtility? mediaUtil
+        {
+            get
+            {
+                if (_mediaUtil == null)
+                {
+                    _mediaUtil = _serviceUtil?.GetMediaUtility();
+                }
+                return _mediaUtil;
             }
         }
 
@@ -126,7 +147,7 @@ namespace XrmPath.UmbracoCore.Utilities
         public decimal WeightedScore(IPublishedContent? content, decimal score, decimal applyMultiplier = 1)
         {
             var weightedScore = score;
-            var weight = _pcUtil.GetNodeDecimal(content, "weight", 1);
+            var weight = pcUtil?.GetNodeDecimal(content, "weight", 1) ?? 1;
 
             if (weight != 1)
             {
@@ -189,7 +210,7 @@ namespace XrmPath.UmbracoCore.Utilities
                                 Id = searchResultId,
                                 Score = weightedScore,
                                 OriginalScore = score,
-                                Title = _pcUtil.GetTitle(searchNode),
+                                Title = pcUtil?.GetTitle(searchNode) ?? "",
                                 Type = "content",
                                 ShortDescription = GetSearchResultItem(searchResult, $"{UmbracoCustomFields.Description},{UmbracoCustomFields.MetaDescription}"),
                                 SubScores = new List<SearchScore> { new SearchScore { NodeId = searchResultId, Score = weightedScore, OriginalScore = score } },
@@ -234,10 +255,10 @@ namespace XrmPath.UmbracoCore.Utilities
                                             Id = topLevelNode?.Id ?? 0,
                                             //Score = weightedScore,
                                             //OriginalScore = score,
-                                            Title = _pcUtil.GetTitle(topLevelNode),
-                                            Url = _pcUtil.GetUrl(topLevelNode),
+                                            Title = pcUtil?.GetTitle(topLevelNode) ?? "",
+                                            Url = pcUtil?.GetUrl(topLevelNode) ?? "",
                                             Type = "content",
-                                            ShortDescription = _pcUtil.GetContentValue(topLevelNode, UmbracoCustomFields.Description),
+                                            ShortDescription = pcUtil?.GetContentValue(topLevelNode, UmbracoCustomFields.Description) ?? "",
                                             SubScores = new List<SearchScore> { new SearchScore { NodeId = searchResultId, Score = weightedScore, OriginalScore = score } }
                                         };
                                         resultItems.Add(resultItem);
@@ -329,7 +350,7 @@ namespace XrmPath.UmbracoCore.Utilities
                 //var searchNode = umbracoHelper.GetById(searchResult.Id);
 
                 var searchResultId = int.Parse(searchResult.Id);
-                var mediaNode = _mediaUtil?.GetMediaItem(searchResultId);
+                var mediaNode = mediaUtil?.GetMediaItem(searchResultId);
                 if (mediaNode != null)
                 {
                     var mediaUrl = mediaNode.Url;
@@ -362,7 +383,7 @@ namespace XrmPath.UmbracoCore.Utilities
             var node = _umbracoHelper?.Content(nodeId);
             if (node?.Id > 0)
             {
-                searchUrl = _pcUtil.GetUrl(node);
+                searchUrl = pcUtil?.GetUrl(node) ?? "";
             }
 
             return searchUrl;
