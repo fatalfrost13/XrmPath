@@ -12,6 +12,7 @@
         public static readonly string FileTextContent = "fileTextContent";
         public static readonly string Grid = "grid";
         public static readonly string Hidden = "umbracoNavihide";
+        public static readonly string KeywordTags = "keywordTags";
         public static readonly string MetaDescription = "metaDescription";
         public static readonly string MetaKeywords = "metaKeywords";
         public static readonly string NavigationTitle = "navigationTitle";

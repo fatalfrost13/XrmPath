@@ -18,6 +18,7 @@ namespace XrmPath.UmbracoCore.Utilities
         protected ContentUtility? _contentUtil;
         protected LoggingUtility? _loggingUtil;
         protected MediaUtility? _mediaUtil;
+        protected QueryUtility? _queryUtil;
 
         protected UmbracoHelper? umbracoHelper;
         protected IExamineManager? examineManager;
@@ -96,6 +97,16 @@ namespace XrmPath.UmbracoCore.Utilities
                 return _contentUtil;
             }
         }
-
+        protected QueryUtility? queryUtil
+        {
+            get
+            {
+                if (_queryUtil == null)
+                {
+                    _queryUtil = _serviceUtil?.GetQueryUtility();
+                }
+                return _queryUtil;
+            }
+        }
     }
 }

@@ -1,20 +1,24 @@
 ﻿using Examine;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Logging;
 using Newtonsoft.Json;
+using System.Data;
 using Umbraco.Cms.Core.Models.PublishedContent;
 using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Web.Common;
+using XrmPath.Helpers.Model;
 using XrmPath.Helpers.Utilities;
 using XrmPath.UmbracoCore.Models;
+using XrmPath.UmbracoCore.Models.Definitions;
 
 namespace XrmPath.UmbracoCore.Utilities
 {
     public class PublishedContentUtility: BaseInitializer
     {
-        public PublishedContentUtility(ServiceUtility? serviceUtil) : base(serviceUtil)
-        {
-        }
+        public PublishedContentUtility(ServiceUtility? serviceUtil) : base(serviceUtil){}
+        private readonly object LockExcludeNodesLookup = new object();
+        private List<GenericModel>? _ExcludeNodeFolders { get; set; }
 
         public bool NodeExists(IPublishedContent? content)
         {
@@ -281,13 +285,13 @@ namespace XrmPath.UmbracoCore.Utilities
             return null;
         }
 
-        public string GetContentColor(IPublishedContent content, string alias, string defaultColor = null)
+        public string GetContentColor(IPublishedContent content, string alias, string? defaultColor = null)
         {
             var colorModel = GetContentColorModel(content, alias, defaultColor);
             return colorModel.ColorValue;
         }
 
-        public ColorPickerModel GetContentColorModel(IPublishedContent content, string alias, string defaultColor = null)
+        public ColorPickerModel GetContentColorModel(IPublishedContent content, string alias, string? defaultColor = null)
         {
             var color = !string.IsNullOrEmpty(GetContentValue(content, alias)) ? GetContentValue(content, alias) : null;
             ColorPickerModel? colorModel = new ColorPickerModel();
@@ -316,6 +320,204 @@ namespace XrmPath.UmbracoCore.Utilities
             }
 
             return colorModel ?? new ColorPickerModel();
+        }
+        public bool NodeHidden(IPublishedContent content, string alias = "umbracoNaviHide")
+        {
+            if (!content.HasProperty(alias))
+            {
+                //only check if hidden if property exists.
+                return false;
+            }
+            var hidden = (!string.IsNullOrEmpty(GetContentValue(content, alias)) && GetContentValue(content, alias) == "1") || IsExcludedContent(content);
+            return hidden;
+        }
+
+        public bool NodeHiddenFromSearch(IPublishedContent content, string alias = "hideFromSearch")
+        {
+            if (!content.HasProperty(alias))
+            {
+                //only check if hidden if property exists.
+                return false;
+            }
+            var hidden = (!string.IsNullOrEmpty(GetContentValue(content, alias)) && GetContentValue(content, alias) == "1") || IsExcludedContent(content);
+            return hidden;
+        }
+        /// <summary>
+        /// Nodes will be excluded and hidden in NodeHidden and NodeHiddenFromSearch methods
+        /// Test folder should be excluded from site completely
+        /// Id represents Node ID, ValueInt represents level
+        /// </summary>
+        public List<GenericModel> ExcludeNodeFolders
+        {
+            get
+            {
+                if (_ExcludeNodeFolders == null)
+                {
+                    lock (LockExcludeNodesLookup)
+                    {
+                        if (_ExcludeNodeFolders == null)
+                        {
+                            //Exclude the Test Pages Folder
+                            var excludeTestIds = queryUtil?.GetPageByUniqueId(UmbracoCustomLookups.TestPages);
+                            if (excludeTestIds != null)
+                            {
+                                var testPagesFolder = new GenericModel { Id = excludeTestIds.Id, ValueInt = excludeTestIds.Level };
+                                _ExcludeNodeFolders = new List<GenericModel> { testPagesFolder };
+                            }
+                            else
+                            {
+                                _ExcludeNodeFolders = new List<GenericModel>();
+                            }
+                        }
+                    }
+                }
+                return _ExcludeNodeFolders;
+            }
+        }
+
+        public bool IsExcludedContent(IPublishedContent content)
+        {
+            var excludedFolderIds = ExcludeNodeFolders;
+            foreach (var excludedFolder in excludedFolderIds)
+            {
+                if (content.Level >= excludedFolder.ValueInt)
+                {
+                    var contentFolder = content.AncestorOrSelf(excludedFolder.ValueInt);
+                    if (contentFolder != null && contentFolder.Id == excludedFolder.Id)
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
+        public bool HasAccess(IPublishedContent content) { return true; }
+        //public bool HasAccess(IPublishedContent content)
+        //{
+        //    var hasAccess = true;
+        //    var isProtected = ServiceUtility.PublicAccessService.IsProtected(content.Path);
+        //    if (isProtected)
+        //    {
+        //        hasAccess = false;
+        //        if (MembershipHelper.UserIsAuthenticated())
+        //        {
+        //            try
+        //            {
+        //                hasAccess = ServiceUtility.PublicAccessService.HasAccess(content.Path, Membership.GetUser(), Roles.Provider);
+
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                //Serilog.Log.Warning($"XrmPath.UmbracoCore caught error on PublishedContentUtility.HasAccess(): {ex}");
+        //                LogHelper.Warning($"XrmPath.UmbracoCore caught error on PublishedContentUtility.HasAccess(): {ex}");
+        //            }
+        //        }
+        //    }
+        //    return hasAccess;
+        //}
+
+        public int FindChildNodeId(IPublishedContent content, ISet<string> nodeTypeAliasSet)
+        {
+            var firstChildNode = FindChildNode(content, nodeTypeAliasSet)?.Id ?? 0;
+            return firstChildNode;
+        }
+        public int FindChildNodeId(IPublishedContent content, string nodeTypeAlias)
+        {
+            var firstChildNode = FindChildNode(content, nodeTypeAlias)?.Id ?? 0;
+            return firstChildNode;
+        }
+        public IPublishedContent? FindChildNode(IPublishedContent content, ISet<string> nodeTypeAliasSet)
+        {
+            if (content == null || content.Id == 0 || NodeHidden(content) || !HasAccess(content) || content.Children == null) return null;
+            return content?.Children?.FirstOrDefault(child => NodeExists(child) && !NodeHidden(child) && nodeTypeAliasSet.Contains(child.ContentType.Alias));
+        }
+        public IPublishedContent? FindChildNode(IPublishedContent content, string nodeTypeAlias)
+        {
+            if (content == null || content.Id == 0 || NodeHidden(content) || !HasAccess(content) || content.Children == null) return null;
+            return content.Children.FirstOrDefault(child => NodeExists(child) && !NodeHidden(child) && HasAccess(content) && string.Equals(nodeTypeAlias, child.ContentType.Alias, StringComparison.Ordinal));
+        }
+
+        public int FindContainerNodeId(IPublishedContent content, string nodeTypeAlias = "")
+        {
+            var containerId = FindContainerNode(content, nodeTypeAlias)?.Id ?? 0;
+            return containerId;
+        }
+
+        public int FindContainerNodeId(IPublishedContent content, ISet<string> nodeTypeAliases)
+        {
+            var containerId = FindContainerNode(content, nodeTypeAliases)?.Id ?? 0;
+            return containerId;
+        }
+
+        public IPublishedContent? FindContainerNode(IPublishedContent content, string alias)
+        {
+            var containerNode = GetNodesInherit(content, alias).FirstOrDefault();
+            return containerNode;
+        }
+
+        public IPublishedContent? FindContainerNode(IPublishedContent content, ISet<string> aliases)
+        {
+            var containerNode = GetNodesInherit(content, aliases).FirstOrDefault();
+            return containerNode;
+        }
+
+        public IEnumerable<IPublishedContent> FindAllNodes(IPublishedContent content, ISet<string> nodeTypeAliasSet, bool includeHidden = false)
+        {
+            if (content == null || content.Id == 0)
+            {
+                return Enumerable.Empty<IPublishedContent>();
+            }
+            var allNodes = content.DescendantsOrSelf().Where(i => nodeTypeAliasSet.Contains(i.ContentType.Alias) && (includeHidden || !NodeHidden(i)) && HasAccess(i));
+            return allNodes;
+        }
+
+        public IEnumerable<IPublishedContent> FindAllNodes(IPublishedContent content, string nodeTypeAlias, bool includeHidden = false)
+        {
+            if (content == null || content.Id == 0)
+            {
+                return Enumerable.Empty<IPublishedContent>();
+            }
+            var allNodes = content.DescendantsOrSelf().Where(i => string.Equals(nodeTypeAlias, i.ContentType.Alias, StringComparison.Ordinal) && (includeHidden || !NodeHidden(i)) && HasAccess(i));
+            return allNodes;
+        }
+
+        public string GetDate(IPublishedContent content, string dateFormat = "", string alias = "date")
+        {
+            var date = GetDateTime(content, alias);
+            //if (string.IsNullOrEmpty(dateFormat))
+            //{
+            //    dateFormat = ConfigurationManager.AppSettings["dateFormat"];
+            //}
+            var strDate = date.ToString(dateFormat);
+            return strDate;
+        }
+
+        public DateTime GetDateTime(IPublishedContent content, string alias = "date")
+        {
+            var date = content.CreateDate;
+            var dateValue = GetContentValue(content, alias);
+            if (!string.IsNullOrEmpty(dateValue))
+            {
+                date = Convert.ToDateTime(dateValue);
+            }
+            return date;
+        }
+
+        public DateTime? GetNullableDateTime(IPublishedContent content, string alias = "date", DateTime? defaultDate = null)
+        {
+            var date = defaultDate;
+            var dateValue = GetContentValue(content, alias);
+            if (!string.IsNullOrEmpty(dateValue))
+            {
+                DateTime parseDate;
+                var validDate = DateTime.TryParse(dateValue, out parseDate);
+                if (validDate && parseDate > DateTime.MinValue)
+                {
+                    date = Convert.ToDateTime(dateValue);
+                }
+            }
+            return date;
         }
     }
 }

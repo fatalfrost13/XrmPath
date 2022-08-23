@@ -15,6 +15,7 @@ namespace XrmPath.UmbracoCore.Utilities
         protected LoggingUtility? _loggingUtil;
         protected PublishedContentUtility? _pcUtil;
         protected SearchUtility? _searchUtil;
+        protected QueryUtility? _queryUtil;
         public ServiceUtility(ILogger<object>? iLogger = null, UmbracoHelper? umbracoHelper = null, IMediaService? mediaService = null, IExamineManager? examineManager = null, IContentService? contentService = null, IContentTypeService? contentTypeService = null, IOptions<AppSettingsModel>? appSettings = null)
             : base(iLogger, umbracoHelper, mediaService, examineManager, contentService, contentTypeService, appSettings)
         {
@@ -87,6 +88,14 @@ namespace XrmPath.UmbracoCore.Utilities
                 _searchUtil = new SearchUtility(this);
             }
             return _searchUtil;
+        }
+        public QueryUtility? GetQueryUtility()
+        {
+            if (_queryUtil == null && _umbracoHelper != null)
+            {
+                _queryUtil = new QueryUtility(this);
+            }
+            return _queryUtil;
         }
     }
 }
