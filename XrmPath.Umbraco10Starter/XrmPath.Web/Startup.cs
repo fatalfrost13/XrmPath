@@ -35,7 +35,7 @@ namespace XrmPath.Web
             //bind object model from configuration
             //AppSettingsModel myConfig = _config.GetSection("ApplicationSettings").Get<AppSettingsModel>();
             //services.AddSingleton(myConfig);
-            services.Configure<AppSettingsModel>(_config.GetSection("AppSettingsModel"));
+            services.Configure<AppSettingsModel>(_config.GetSection("ApplicationSettings"));
 
             services.AddUmbraco(_env, _config)
                 .AddBackOffice()

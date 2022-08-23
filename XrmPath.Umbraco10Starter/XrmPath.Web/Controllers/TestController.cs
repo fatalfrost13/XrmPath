@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
+using Umbraco.Cms.Core.Configuration.Models;
 using Umbraco.Cms.Core.Models.PublishedContent;
 using Umbraco.Cms.Web.Common;
+using XrmPath.UmbracoCore.Models;
 
 namespace XrmPath.Web.Controllers
 {
@@ -8,8 +11,11 @@ namespace XrmPath.Web.Controllers
     public class TestController : Controller
     {
         private readonly UmbracoHelper _umbracoHelper;
-
-        public TestController(UmbracoHelper umbracoHelper) => _umbracoHelper = umbracoHelper;
+        private readonly AppSettingsModel _appSettings;
+        public TestController(UmbracoHelper umbracoHelper, IOptions<AppSettingsModel> appSettings) { 
+            _umbracoHelper = umbracoHelper;
+            _appSettings = appSettings.Value;
+        }
 
         public IActionResult GetHomeNodeName()
         {
@@ -21,6 +27,14 @@ namespace XrmPath.Web.Controllers
             }
 
             return Ok(rootNode.Name);
+        }
+
+        public string AppSettings() {
+            string appValue = "";
+            if (_appSettings != null) {
+                appValue = _appSettings.DateFormat;
+            }
+            return appValue;
         }
     }
 }
