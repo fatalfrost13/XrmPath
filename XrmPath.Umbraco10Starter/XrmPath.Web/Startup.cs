@@ -1,3 +1,6 @@
+using System.Configuration;
+using XrmPath.Web.UmbracoUtils.Models.XrmPath.UmbracoUtils.Models;
+
 namespace XrmPath.Web
 {
     public class Startup
@@ -29,6 +32,11 @@ namespace XrmPath.Web
         /// </remarks>
         public void ConfigureServices(IServiceCollection services)
         {
+            //bind object model from configuration
+            //AppSettingsModel myConfig = _config.GetSection("ApplicationSettings").Get<AppSettingsModel>();
+            //services.AddSingleton(myConfig);
+            services.Configure<AppSettingsModel>(_config.GetSection("AppSettingsModel"));
+
             services.AddUmbraco(_env, _config)
                 .AddBackOffice()
                 .AddWebsite()

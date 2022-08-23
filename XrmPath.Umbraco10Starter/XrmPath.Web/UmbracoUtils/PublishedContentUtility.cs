@@ -1,4 +1,5 @@
 ﻿using Examine;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Logging;
 using Newtonsoft.Json;
 using Umbraco.Cms.Core.Models;
@@ -9,14 +10,17 @@ using Umbraco.Extensions;
 using XrmPath.Helpers.Utilities;
 using XrmPath.UmbracoUtils.Models;
 using XrmPath.Web.UmbracoUtils;
+using XrmPath.Web.UmbracoUtils.Models.XrmPath.UmbracoUtils.Models;
 
 namespace XrmPath.UmbracoUtils
 {
     public class PublishedContentUtility: BaseUtility
     {
 
-        private readonly MultiUrlUtility _urlUtil;
-        public PublishedContentUtility(UmbracoHelper? umbracoHelper = null, IMediaService? mediaService = null, IExamineManager? examineManager = null) : base(umbracoHelper, mediaService, examineManager)
+        protected MultiUrlUtility _urlUtil;
+        protected ContentUtility? _contentUtil;
+        public PublishedContentUtility(UmbracoHelper? umbracoHelper = null, IMediaService? mediaService = null, IExamineManager? examineManager = null, IContentService? contentService = null, IContentTypeService? contentTypeService = null, IOptions<AppSettingsModel>? appSettings = null) 
+            : base(umbracoHelper, mediaService, examineManager, contentService, contentTypeService, appSettings)
         {
             _urlUtil = new MultiUrlUtility(this);
         }
@@ -32,6 +36,26 @@ namespace XrmPath.UmbracoUtils
         {
             return _examineManager;
         }
+        public IContentService? GetContentService()
+        {
+            return _contentService;
+        }
+        public IContentTypeService? GetContentServiceType()
+        {
+            return _contentTypeService;
+        }
+        public MultiUrlUtility? GetMultiUrlUtility()
+        {
+            return _urlUtil;
+        }
+        public ContentUtility? GetContentUtility()
+        {
+            if (_contentUtil == null) {
+                _contentUtil = new ContentUtility(this);
+            }
+            return _contentUtil;
+        }
+
 
         public bool NodeExists(IPublishedContent? content)
         {

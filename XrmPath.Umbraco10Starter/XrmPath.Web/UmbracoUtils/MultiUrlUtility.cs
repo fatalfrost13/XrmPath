@@ -1,7 +1,10 @@
 ﻿using Microsoft.IdentityModel.Logging;
+using Newtonsoft.Json;
 using Umbraco.Cms.Core.Models;
 using Umbraco.Cms.Core.Models.PublishedContent;
+using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Web.Common;
+using XrmPath.Helpers.Utilities;
 using XrmPath.UmbracoUtils.Models;
 
 
@@ -11,9 +14,12 @@ namespace XrmPath.UmbracoUtils
     {
         private readonly PublishedContentUtility _pcUtil;
         private readonly UmbracoHelper? _umbracoHelper;
+        private readonly ContentUtility? _contentUtil;
+
         public MultiUrlUtility(PublishedContentUtility pcUtil) { 
             _pcUtil = pcUtil;
             _umbracoHelper = _pcUtil.GetUmbracoHelper();
+            _contentUtil = _pcUtil.GetContentUtility();
         }
 
         public UrlPicker GetUrlPicker(int nodeId, string alias = "urlPicker")
@@ -88,6 +94,82 @@ namespace XrmPath.UmbracoUtils
                 Console.WriteLine(ex.Message);
                 //Serilog.Log.Error(ex, $"XrmPath.UmbracoCore caught error on MultiUrlUtility.GetUrlPicker(IPublishedContent). URL Info: {UrlUtility.GetCurrentUrl()}");
                 //LogHelper.Error($"XrmPath.UmbracoCore caught error on MultiUrlUtility.GetUrlPicker(IPublishedContent). URL Info: {UrlUtility.GetCurrentUrl()}", ex);
+            }
+
+            return urlPicker;
+        }
+
+        public UrlPicker GetUrlPicker(IContent content, string alias = "urlPicker")
+        {
+            var urlPicker = new UrlPicker();
+            try
+            {
+                var stringData = _contentUtil?.GetContentValue(content, alias);
+                //var links = JsonConvert.DeserializeObject<JArray>(stringData);
+                //var firstLink = links?.FirstOrDefault();
+
+                Link? firstLink = null;
+                var links = new List<Link?>();
+                if (!string.IsNullOrEmpty(stringData))
+                {
+                    //links = (List<Link>)node.GetProperty(alias).GetValue();
+                    links = (List<Link>)content.GetValue(alias);
+                    if (links != null && links.Any())
+                    {
+                        firstLink = links.FirstOrDefault();
+                    }
+
+                    var obj = content.GetValue(alias);
+                    if (obj.GetType() == typeof(Link))
+                    {
+                        firstLink = (Link)obj;
+                    }
+                    else
+                    {
+                        links = (List<Link>)obj;
+                        if (links.Any())
+                        {
+                            firstLink = links.FirstOrDefault();
+                        }
+                    }
+                }
+
+
+                if (firstLink != null)
+                {
+                    //var item = new Link(firstLink);
+                    var item = JsonConvert.DeserializeObject<Link>(stringData);
+                    var url = item?.Url ?? string.Empty;
+
+                    //if (url.StartsWith("/"))
+                    //{
+                    //    url = SiteUrlHelper.GetSiteUrl(url);
+                    //}
+
+                    urlPicker = new UrlPicker
+                    {
+                        Title = item?.Name ?? "",
+                        LinkType = item?.Type ?? LinkType.Content,
+                        NewWindow = item?.Target == "_blank",
+                        NodeId = GetIdFromLink(item),
+                        Url = url
+                    };
+                }
+
+                if (string.IsNullOrEmpty(urlPicker.Title))
+                {
+                    urlPicker.Title = _contentUtil?.GetTitle(content) ?? "";
+                }
+
+                if (string.IsNullOrEmpty(urlPicker.Url))
+                {
+                    urlPicker.Url = "#";
+                }
+            }
+            catch (Exception ex)
+            {
+                //Serilog.Log.Error(ex, $"XrmPath.UmbracoCore caught error on MultiUrlUtility.GetUrlPicker(IContent). URL Info: {UrlUtility.GetCurrentUrl()}");
+                //LogHelper.Error($"XrmPath.UmbracoCore caught error on MultiUrlUtility.GetUrlPicker(IContent). URL Info: {UrlUtility.GetCurrentUrl()}", ex);
             }
 
             return urlPicker;
