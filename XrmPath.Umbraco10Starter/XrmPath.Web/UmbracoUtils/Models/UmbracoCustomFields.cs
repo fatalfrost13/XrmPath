@@ -19,6 +19,7 @@ namespace XrmPath.UmbracoUtils.Models
         public static readonly string PageTitle = "pageTitle";
         public static readonly string Tags = "tags";
         public static readonly string Title = "title";
+        public static readonly string UniqueId = "uniqueId";
         public static readonly string UrlPicker = "urlPicker";
         public static readonly string UserName = "userName";
         public static readonly string UserComment = "userComment";
