@@ -1,9 +1,9 @@
 ﻿using Umbraco.Cms.Core.Models.PublishedContent;
 using Umbraco.Cms.Web.Common;
-using XrmPath.UmbracoUtils;
-using XrmPath.UmbracoUtils.Models;
+using XrmPath.UmbracoCore.Definitions;
+using XrmPath.UmbracoCore.Models;
 
-namespace XrmPath.Web.UmbracoUtils
+namespace XrmPath.UmbracoCore.Utilities
 {
     public class QueryUtility
     {

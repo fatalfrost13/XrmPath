@@ -4,10 +4,10 @@ using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Web.Common;
 using Umbraco.Cms.Core.Models;
 using Umbraco.Cms.Core.Models.PublishedContent;
-using XrmPath.UmbracoUtils.Models;
 using Umbraco.Cms.Core;
+using XrmPath.UmbracoCore.Definitions;
 
-namespace XrmPath.UmbracoUtils
+namespace XrmPath.UmbracoCore.Utilities
 {
     //This Utility will make database calls and does not use Umbraco Cached content
 

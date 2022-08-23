@@ -1,5 +1,5 @@
 ﻿
-namespace XrmPath.UmbracoUtils.Models
+namespace XrmPath.UmbracoCore.Models
 {
     public class SearchScore
     {

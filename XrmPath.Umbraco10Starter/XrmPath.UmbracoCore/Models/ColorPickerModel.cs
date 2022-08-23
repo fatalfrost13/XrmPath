@@ -1,6 +1,6 @@
 ﻿using Newtonsoft.Json;
 
-namespace XrmPath.UmbracoUtils.Models
+namespace XrmPath.UmbracoCore.Models
 {
     public class ColorPickerModel
     {

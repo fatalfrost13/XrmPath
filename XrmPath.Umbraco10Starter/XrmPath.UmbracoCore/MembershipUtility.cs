@@ -1,8 +1,6 @@
-﻿using Umbraco.Cms.Core.Security;
-using Umbraco.Cms.Core.Services;
-using Umbraco.Cms.Web.Common.Security;
+﻿using Umbraco.Cms.Web.Common.Security;
 
-namespace XrmPath.UmbracoUtils
+namespace XrmPath.UmbracoCore.Utilities
 {
     public class MembershipUtility
     {

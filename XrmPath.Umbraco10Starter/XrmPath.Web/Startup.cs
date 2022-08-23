@@ -1,5 +1,5 @@
-using System.Configuration;
-using XrmPath.Web.UmbracoUtils.Models.XrmPath.UmbracoUtils.Models;
+
+using XrmPath.UmbracoCore.Models;
 
 namespace XrmPath.Web
 {

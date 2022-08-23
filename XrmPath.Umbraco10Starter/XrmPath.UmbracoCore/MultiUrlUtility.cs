@@ -1,14 +1,11 @@
-﻿using Microsoft.IdentityModel.Logging;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using Umbraco.Cms.Core.Models;
 using Umbraco.Cms.Core.Models.PublishedContent;
-using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Web.Common;
-using XrmPath.Helpers.Utilities;
-using XrmPath.UmbracoUtils.Models;
+using XrmPath.UmbracoCore.Definitions;
+using XrmPath.UmbracoCore.Models;
 
-
-namespace XrmPath.UmbracoUtils
+namespace XrmPath.UmbracoCore.Utilities
 {
     public class MultiUrlUtility
     {

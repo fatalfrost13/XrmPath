@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace XrmPath.UmbracoUtils.Models
+namespace XrmPath.UmbracoCore.Models
 {
     public static class PaginationExtensions
     {

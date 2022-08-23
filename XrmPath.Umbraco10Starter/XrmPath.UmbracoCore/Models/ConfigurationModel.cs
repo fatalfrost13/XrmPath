@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using XrmPath.Helpers.Utilities;
+using XrmPath.UmbracoCore.Definitions;
 
-namespace XrmPath.UmbracoUtils.Models
+namespace XrmPath.UmbracoCore.Models
 {
     public static class ConfigurationModel
     {

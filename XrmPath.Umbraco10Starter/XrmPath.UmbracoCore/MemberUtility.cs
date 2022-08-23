@@ -1,7 +1,7 @@
 ﻿using Umbraco.Cms.Core.Models;
 using XrmPath.Helpers.Utilities;
 
-namespace XrmPath.UmbracoUtils
+namespace XrmPath.UmbracoCore.Utilities
 {
     public static class MemberUtility
     {

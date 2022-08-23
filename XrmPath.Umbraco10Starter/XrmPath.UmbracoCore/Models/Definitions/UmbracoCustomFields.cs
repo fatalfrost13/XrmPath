@@ -1,5 +1,4 @@
-﻿
-namespace XrmPath.UmbracoUtils.Models
+﻿namespace XrmPath.UmbracoCore.Definitions
 {
     public static class UmbracoCustomFields
     {

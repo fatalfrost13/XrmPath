@@ -16,6 +16,7 @@
     <PackageReference Include="Microsoft.ICU.ICU4C.Runtime" Version="68.2.0.9" />
     <PackageReference Include="Umbraco.Cms.Core" Version="10.1.0" />
     <ProjectReference Include="..\XrmPath.Helpers\XrmPath.Helpers.csproj" />
+    <ProjectReference Include="..\XrmPath.UmbracoCore\XrmPath.UmbracoCore.csproj" />
     <RuntimeHostConfigurationOption Include="System.Globalization.AppLocalIcu" Value="68.2.0.9" Condition="$(RuntimeIdentifier.StartsWith('linux')) or $(RuntimeIdentifier.StartsWith('win')) or ('$(RuntimeIdentifier)' == '' and !$([MSBuild]::IsOSPlatform('osx')))" />
   </ItemGroup>
 

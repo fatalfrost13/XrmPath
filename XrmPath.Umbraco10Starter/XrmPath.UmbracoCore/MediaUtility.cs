@@ -1,13 +1,12 @@
-﻿using Microsoft.IdentityModel.Logging;
-using Umbraco.Cms.Core;
+﻿using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.Models.PublishedContent;
 using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Web.Common;
-using XrmPath.Helpers.Model;
 using XrmPath.Helpers.Utilities;
-using XrmPath.UmbracoUtils.Models;
+using XrmPath.UmbracoCore.Models;
+using XrmPath.UmbracoCore.Definitions;
 
-namespace XrmPath.UmbracoUtils
+namespace XrmPath.UmbracoCore.Utilities
 {
     public class MediaUtility
     {

@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace XrmPath.UmbracoUtils.Models
+namespace XrmPath.UmbracoCore.Definitions
 {
     public static class UmbracoCustomTypes
     {
 
-        
+
         public static readonly string ArticleList = "articleList";
         public static readonly string ContentPage = "contentPage";    //this is the "Info Page" document type.
         public static readonly string Article = "article";

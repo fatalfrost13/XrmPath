@@ -1,6 +1,6 @@
 ﻿using System.Runtime.Serialization;
 
-namespace XrmPath.UmbracoUtils.Models
+namespace XrmPath.UmbracoCore.Models
 {
 
     [DataContract]

@@ -1,11 +1,10 @@
 ﻿using Examine;
 using Microsoft.Extensions.Options;
-using Umbraco.Cms.Core.Configuration.Models;
 using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Web.Common;
-using XrmPath.Web.UmbracoUtils.Models.XrmPath.UmbracoUtils.Models;
+using XrmPath.UmbracoCore.Models;
 
-namespace XrmPath.Web.UmbracoUtils
+namespace XrmPath.UmbracoCore.Utilities
 {
     public abstract class BaseUtility
     {

@@ -1,14 +1,13 @@
 ﻿using Examine;
 using XrmPath.Helpers.Utilities;
 using Examine.Search;
-using XrmPath.UmbracoUtils.Models;
+using XrmPath.UmbracoCore.Models;
 using Umbraco.Cms.Web.Common;
 using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Core.Models.PublishedContent;
-using Examine.Lucene.Providers;
-using UmbracoExamine.PDF;
+using XrmPath.UmbracoCore.Definitions;
 
-namespace XrmPath.UmbracoUtils
+namespace XrmPath.UmbracoCore.Utilities
 {
     public class SearchUtility
     {

@@ -1,4 +1,4 @@
-﻿namespace XrmPath.UmbracoUtils.Models
+﻿namespace XrmPath.UmbracoCore.Models
 {
     using Umbraco.Cms.Core.Models;
 

@@ -7,6 +7,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XrmPath.Web", "XrmPath.Web\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "XrmPath.Helpers", "XrmPath.Helpers\XrmPath.Helpers.csproj", "{64F74037-C667-41DB-8F35-284D4D335780}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XrmPath.UmbracoCore", "XrmPath.UmbracoCore\XrmPath.UmbracoCore.csproj", "{FFEE3FE2-6E96-4B8E-A1AD-C65102E9AD1C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{64F74037-C667-41DB-8F35-284D4D335780}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{64F74037-C667-41DB-8F35-284D4D335780}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{64F74037-C667-41DB-8F35-284D4D335780}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FFEE3FE2-6E96-4B8E-A1AD-C65102E9AD1C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FFEE3FE2-6E96-4B8E-A1AD-C65102E9AD1C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FFEE3FE2-6E96-4B8E-A1AD-C65102E9AD1C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FFEE3FE2-6E96-4B8E-A1AD-C65102E9AD1C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
