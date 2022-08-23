@@ -8,18 +8,12 @@ using XrmPath.UmbracoCore.Definitions;
 
 namespace XrmPath.UmbracoCore.Utilities
 {
-    public class MediaUtility
+    public class MediaUtility: BaseInitializer
     {
-        private readonly ServiceUtility? _serviceUtil;
-        private PublishedContentUtility? _pcUtil;
         private readonly UmbracoHelper? _umbracoHelper;
         private readonly IMediaService? _mediaService;
-        public MediaUtility(ServiceUtility? serviceUtil)
+        public MediaUtility(ServiceUtility? serviceUtil): base(serviceUtil)
         {
-            if (_serviceUtil == null && serviceUtil != null)
-            {
-                _serviceUtil = serviceUtil;
-            }
             if (_umbracoHelper == null)
             {
                 _umbracoHelper = _serviceUtil?.GetUmbracoHelper();
@@ -27,17 +21,6 @@ namespace XrmPath.UmbracoCore.Utilities
             if (_mediaService == null)
             {
                 _mediaService = _serviceUtil?.GetMediaService();
-            }
-        }
-        private PublishedContentUtility? pcUtil
-        {
-            get
-            {
-                if (_pcUtil == null)
-                {
-                    _pcUtil = _serviceUtil?.GetPublishedContentUtility();
-                }
-                return _pcUtil;
             }
         }
 

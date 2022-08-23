@@ -9,15 +9,12 @@ using XrmPath.UmbracoCore.Definitions;
 
 namespace XrmPath.UmbracoCore.Utilities
 {
-    public class SearchUtility
+    public class SearchUtility: BaseInitializer
     {
-        protected ServiceUtility? _serviceUtil;
-        private PublishedContentUtility? _pcUtil;
         private readonly UmbracoHelper? _umbracoHelper;
         private readonly IMediaService? _mediaService;
         private readonly IExamineManager? _examineManager;
-        private MediaUtility? _mediaUtil;
-        public SearchUtility(ServiceUtility serviceUtil)
+        public SearchUtility(ServiceUtility serviceUtil) : base(serviceUtil)
         {
             if (_serviceUtil == null && serviceUtil != null)
             {
@@ -34,30 +31,6 @@ namespace XrmPath.UmbracoCore.Utilities
             if (_examineManager == null)
             {
                 _examineManager = _serviceUtil?.GetExamineManager();
-            }
-        }
-
-        private PublishedContentUtility? pcUtil
-        {
-            get
-            {
-                if (_pcUtil == null)
-                {
-                    _pcUtil = _serviceUtil?.GetPublishedContentUtility();
-                }
-                return _pcUtil;
-            }
-        }
-
-        private MediaUtility? mediaUtil
-        {
-            get
-            {
-                if (_mediaUtil == null)
-                {
-                    _mediaUtil = _serviceUtil?.GetMediaUtility();
-                }
-                return _mediaUtil;
             }
         }
 

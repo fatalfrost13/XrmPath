@@ -10,33 +10,13 @@ using XrmPath.UmbracoCore.Models;
 
 namespace XrmPath.UmbracoCore.Utilities
 {
-    public class PublishedContentUtility
+    public class PublishedContentUtility: BaseInitializer
     {
-
-        protected ServiceUtility? _serviceUtil;
-        protected MultiUrlUtility? _urlUtil;
-        protected ContentUtility? _contentUtil;
-        protected LoggingUtility? _loggingUtil;
         protected UmbracoHelper? _umbracoHelper;
-        public PublishedContentUtility(ServiceUtility? serviceUtil)
+        public PublishedContentUtility(ServiceUtility? serviceUtil) : base(serviceUtil)
         {
-            if (_serviceUtil == null && serviceUtil != null) {
-                _serviceUtil = serviceUtil;
-            }
             if (_umbracoHelper == null) {
                 _umbracoHelper = _serviceUtil?.GetUmbracoHelper();
-            }
-        }
-
-        private MultiUrlUtility? urlUtil
-        {
-            get
-            {
-                if (_urlUtil == null)
-                {
-                    _urlUtil = _serviceUtil?.GetMultiUrlUtility();
-                }
-                return _urlUtil;
             }
         }
 

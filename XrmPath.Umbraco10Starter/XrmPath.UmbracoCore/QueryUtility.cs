@@ -5,12 +5,10 @@ using XrmPath.UmbracoCore.Models;
 
 namespace XrmPath.UmbracoCore.Utilities
 {
-    public class QueryUtility
+    public class QueryUtility: BaseInitializer
     {
-        protected ServiceUtility? _serviceUtil;
         protected readonly UmbracoHelper? _umbracoHelper;
-        protected PublishedContentUtility? _pcUtil;
-        public QueryUtility(ServiceUtility serviceUtil)
+        public QueryUtility(ServiceUtility serviceUtil) : base(serviceUtil)
         {
             if (_serviceUtil == null && serviceUtil != null)
             {
@@ -19,17 +17,6 @@ namespace XrmPath.UmbracoCore.Utilities
             if (_umbracoHelper == null)
             {
                 _umbracoHelper = _serviceUtil?.GetUmbracoHelper();
-            }
-        }
-        private PublishedContentUtility? pcUtil
-        {
-            get
-            {
-                if (_pcUtil == null)
-                {
-                    _pcUtil = _serviceUtil?.GetPublishedContentUtility();
-                }
-                return _pcUtil;
             }
         }
 

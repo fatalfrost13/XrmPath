@@ -7,43 +7,18 @@ using XrmPath.UmbracoCore.Models;
 
 namespace XrmPath.UmbracoCore.Utilities
 {
-    public class MultiUrlUtility
+    public class MultiUrlUtility: BaseInitializer
     {
-        private readonly ServiceUtility? _serviceUtil;
-        private PublishedContentUtility? _pcUtil;
         private readonly UmbracoHelper? _umbracoHelper;
-        private ContentUtility? _contentUtil;
 
-        public MultiUrlUtility(ServiceUtility? serviceUtil) {
+        public MultiUrlUtility(ServiceUtility? serviceUtil) : base(serviceUtil)
+        {
             if (_serviceUtil == null && serviceUtil != null)
             {
                 _serviceUtil = serviceUtil;
             }
             if (_umbracoHelper == null) {
                 _umbracoHelper = _serviceUtil?.GetUmbracoHelper();
-            }
-        }
-
-        private PublishedContentUtility? pcUtil
-        {
-            get
-            {
-                if (_pcUtil == null)
-                {
-                    _pcUtil = _serviceUtil?.GetPublishedContentUtility();
-                }
-                return _pcUtil;
-            }
-        }
-        private ContentUtility? contentUtil
-        {
-            get
-            {
-                if (_contentUtil == null)
-                {
-                    _contentUtil = _serviceUtil?.GetContentUtility();
-                }
-                return _contentUtil;
             }
         }
 

@@ -11,20 +11,13 @@ namespace XrmPath.UmbracoCore.Utilities
 {
     //This Utility will make database calls and does not use Umbraco Cached content
 
-    public class ContentUtility
+    public class ContentUtility: BaseInitializer
     {
-        private readonly ServiceUtility? _serviceUtil;
-        private PublishedContentUtility? _pcUtil;
         private readonly UmbracoHelper? _umbracoHelper;
         private readonly IContentService? _contentService;
         protected readonly IContentTypeService? _contentTypeService;
-        private MultiUrlUtility? _urlUtil;
-        public ContentUtility(ServiceUtility? serviceUtil)
+        public ContentUtility(ServiceUtility? serviceUtil): base(serviceUtil)
         {
-            if (_serviceUtil == null && serviceUtil != null)
-            {
-                _serviceUtil = serviceUtil;  
-            }
             if (_umbracoHelper == null)
             {
                 _umbracoHelper = _serviceUtil?.GetUmbracoHelper();
@@ -36,28 +29,6 @@ namespace XrmPath.UmbracoCore.Utilities
             if (_contentTypeService == null)
             {
                 _contentTypeService = _serviceUtil?.GetContentServiceType();
-            }
-        }
-        private PublishedContentUtility? pcUtil
-        {
-            get
-            {
-                if (_pcUtil == null)
-                {
-                    _pcUtil = _serviceUtil?.GetPublishedContentUtility();
-                }
-                return _pcUtil;
-            }
-        }
-        private MultiUrlUtility? urlUtil
-        {
-            get
-            {
-                if (_urlUtil == null)
-                {
-                    _urlUtil = _serviceUtil?.GetMultiUrlUtility();
-                }
-                return _urlUtil;
             }
         }
 
