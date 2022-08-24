@@ -2,19 +2,17 @@
 
 namespace XrmPath.UmbracoCore.Utilities
 {
-    public class MembershipUtility
+    public class MembershipUtility: BaseInitializer
     {
-        private IMemberSignInManager _memberSignInManager;
-        public MembershipUtility(IMemberSignInManager memberSignInManager) {
-            if (_memberSignInManager == null)
-            {
-                _memberSignInManager = memberSignInManager;
-            }
-        }
+        public MembershipUtility(ServiceUtility? serviceUtil) : base(serviceUtil) { }
+
         public async void CustomSignout()
         {
             //FormsAuthentication.SignOut();
-            await _memberSignInManager.SignOutAsync();
+            if (memberSignInManager != null)
+            {
+                await memberSignInManager.SignOutAsync();
+            }
         }
     }
 }

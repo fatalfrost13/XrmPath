@@ -55,9 +55,9 @@ namespace XrmPath.UmbracoCore.Utilities
             }
             catch (Exception ex)
             {
-                //LogHelper.Error($"XrmPath.UmbracoCore caught error on MediaUtility.GetMediaItem(). URL Info: {UrlUtility.GetCurrentUrl()}", ex);
-                //Serilog.Log.Error(ex, $"XrmPath.Web caught error on MediaUtility.GetMediaItem(). URL Info: {UrlUtility.GetCurrentUrl()}");
                 Console.WriteLine(ex.Message);
+                loggingUtil?.Error($"XrmPath.UmbracoCore caught error on MediaUtility.GetMediaItem(). URL Info: {UrlUtility.GetCurrentUrl()}", ex);
+                //Serilog.Log.Error(ex, $"XrmPath.Web caught error on MediaUtility.GetMediaItem(). URL Info: {UrlUtility.GetCurrentUrl()}");
             }
             return null;
         }
@@ -113,7 +113,7 @@ namespace XrmPath.UmbracoCore.Utilities
             {
                 Console.WriteLine(ex.Message);
                 //Serilog.Log.Error(ex, $"XrmPath.Web caught error on MediaUtility.GetMediaItem(IContent, alias). URL Info: {UrlUtility.GetCurrentUrl()}");
-                //LogHelper.Error($"XrmPath.UmbracoCore caught error on MediaUtility.GetMediaItem(IContent, alias). URL Info: {UrlUtility.GetCurrentUrl()}", ex);
+                loggingUtil?.Error($"XrmPath.UmbracoCore caught error on MediaUtility.GetMediaItem(IContent, alias). URL Info: {UrlUtility.GetCurrentUrl()}", ex);
             }
             return path;
         }
@@ -142,7 +142,7 @@ namespace XrmPath.UmbracoCore.Utilities
             {
                 Console.WriteLine(ex.Message);
                 //Serilog.Log.Error(ex, $"XrmPath.Web caught error on MediaUtility.GetMediaProperty(). URL Info: {UrlUtility.GetCurrentUrl()}");
-                //LogHelper.Error($"XrmPath.UmbracoCore caught error on MediaUtility.GetMediaProperty(). URL Info: {UrlUtility.GetCurrentUrl()}", ex);
+                loggingUtil?.Error($"XrmPath.UmbracoCore caught error on MediaUtility.GetMediaProperty(). URL Info: {UrlUtility.GetCurrentUrl()}", ex);
             }
             return path;
         }
@@ -198,7 +198,7 @@ namespace XrmPath.UmbracoCore.Utilities
             {
                 Console.WriteLine(ex.Message);
                 //Serilog.Log.Error(ex, $"XrmPath.UmbracoCore caught error on MediaUtility.GetMediaCropUrl(). URL Info: {UrlUtility.GetCurrentUrl()}");
-                //LogHelper.Error($"XrmPath.UmbracoCore caught error on MediaUtility.GetMediaCropUrl(). URL Info: {UrlUtility.GetCurrentUrl()}", ex);
+                loggingUtil?.Error($"XrmPath.UmbracoCore caught error on MediaUtility.GetMediaCropUrl(). URL Info: {UrlUtility.GetCurrentUrl()}", ex);
             }
             return cropUrl;
         }
@@ -256,7 +256,7 @@ namespace XrmPath.UmbracoCore.Utilities
             {
                 Console.WriteLine(ex.Message);
                 //Serilog.Log.Error(ex, $"XrmPath.UmbracoCore caught error on MediaUtility.GetMediaList(IPublishedContent). URL Info: {UrlUtility.GetCurrentUrl()}");
-                //LogHelper.Error($"XrmPath.UmbracoCore caught error on MediaUtility.GetMediaList(IPublishedContent). URL Info: {UrlUtility.GetCurrentUrl()}", ex);
+                loggingUtil?.Error($"XrmPath.UmbracoCore caught error on MediaUtility.GetMediaList(IPublishedContent). URL Info: {UrlUtility.GetCurrentUrl()}", ex);
             }
 
             return mediaList;

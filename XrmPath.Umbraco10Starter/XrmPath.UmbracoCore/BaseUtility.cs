@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Web.Common;
+using Umbraco.Cms.Web.Common.Security;
 using XrmPath.UmbracoCore.Models;
 
 namespace XrmPath.UmbracoCore.Utilities
@@ -10,17 +11,18 @@ namespace XrmPath.UmbracoCore.Utilities
     public abstract class BaseUtility
     {
         protected readonly UmbracoHelper? _umbracoHelper;
-        protected readonly ILogger<object>? _iLogger;
+        protected readonly ILogger<object>? _logger;
         protected readonly IMediaService? _mediaService;
         protected readonly IExamineManager? _examineManager;
         protected readonly IContentService? _contentService;
         protected readonly IContentTypeService? _contentTypeService;
         protected readonly IOptions<AppSettingsModel>? _appSettings;
-        public BaseUtility(ILogger<object>? iLogger, UmbracoHelper? umbracoHelper, IMediaService? mediaService, IExamineManager? examineManager, IContentService? contentService, IContentTypeService? contentTypeService, IOptions<AppSettingsModel>? appSettings)
+        protected readonly IMemberSignInManager? _memberSignInManager;
+        public BaseUtility(ILogger<object>? logger, UmbracoHelper? umbracoHelper, IMediaService? mediaService, IExamineManager? examineManager, IContentService? contentService, IContentTypeService? contentTypeService, IMemberSignInManager? memberSignInManager, IOptions<AppSettingsModel>? appSettings)
         {
-            if (iLogger != null && _iLogger == null)
+            if (logger != null && _logger == null)
             {
-                _iLogger = iLogger;
+                _logger = logger;
             }
             if (umbracoHelper != null && _umbracoHelper == null)
             {
@@ -45,6 +47,10 @@ namespace XrmPath.UmbracoCore.Utilities
             if (appSettings != null && _appSettings == null)
             {
                 _appSettings = appSettings;
+            }
+            if (memberSignInManager != null && _memberSignInManager == null)
+            {
+                _memberSignInManager = memberSignInManager;
             }
         }
     }

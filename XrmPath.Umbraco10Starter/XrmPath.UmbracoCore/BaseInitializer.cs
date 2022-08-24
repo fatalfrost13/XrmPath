@@ -1,4 +1,5 @@
 ﻿using Examine;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Web.Common;
+using Umbraco.Cms.Web.Common.Security;
 
 namespace XrmPath.UmbracoCore.Utilities
 {
@@ -19,17 +21,24 @@ namespace XrmPath.UmbracoCore.Utilities
         protected LoggingUtility? _loggingUtil;
         protected MediaUtility? _mediaUtil;
         protected QueryUtility? _queryUtil;
+        protected MemberUtility? _memberUtil;
 
         protected UmbracoHelper? umbracoHelper;
         protected IExamineManager? examineManager;
         protected IMediaService? mediaService;
         protected IContentService? contentService;
         protected IContentTypeService? contentTypeService;
+        protected IMemberSignInManager? memberSignInManager;
+        protected ILogger<object>? logger;
 
         public BaseInitializer(ServiceUtility? serviceUtil) {
             if (_serviceUtil == null && serviceUtil != null)
             {
                 _serviceUtil = serviceUtil;
+            }
+            if (logger == null)
+            {
+                logger = _serviceUtil?.GetLogger();
             }
             if (umbracoHelper == null)
             {
@@ -51,8 +60,27 @@ namespace XrmPath.UmbracoCore.Utilities
             {
                 contentTypeService = _serviceUtil?.GetContentServiceType();
             }
+            if (memberSignInManager == null)
+            {
+                memberSignInManager = _serviceUtil?.GetMemberSignInManager();
+            }
+            if (memberSignInManager == null)
+            {
+                memberSignInManager = _serviceUtil?.GetMemberSignInManager();
+            }
         }
-        
+        protected LoggingUtility? loggingUtil
+        {
+            get
+            {
+                if (_loggingUtil == null)
+                {
+                    _loggingUtil = _serviceUtil?.GetLoggingUtility();
+                }
+                return _loggingUtil;
+            }
+        }
+
         protected PublishedContentUtility? pcUtil
         {
             get
@@ -106,6 +134,17 @@ namespace XrmPath.UmbracoCore.Utilities
                     _queryUtil = _serviceUtil?.GetQueryUtility();
                 }
                 return _queryUtil;
+            }
+        }
+        protected MemberUtility? memberUtil
+        {
+            get
+            {
+                if (_memberUtil == null)
+                {
+                    _memberUtil = _serviceUtil?.GetMemberUtility();
+                }
+                return _memberUtil;
             }
         }
     }

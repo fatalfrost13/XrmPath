@@ -2,6 +2,7 @@
 using Umbraco.Cms.Core.Models;
 using Umbraco.Cms.Core.Models.PublishedContent;
 using Umbraco.Cms.Web.Common;
+using XrmPath.Helpers.Utilities;
 using XrmPath.UmbracoCore.Definitions;
 using XrmPath.UmbracoCore.Models;
 
@@ -84,7 +85,7 @@ namespace XrmPath.UmbracoCore.Utilities
             {
                 Console.WriteLine(ex.Message);
                 //Serilog.Log.Error(ex, $"XrmPath.UmbracoCore caught error on MultiUrlUtility.GetUrlPicker(IPublishedContent). URL Info: {UrlUtility.GetCurrentUrl()}");
-                //LogHelper.Error($"XrmPath.UmbracoCore caught error on MultiUrlUtility.GetUrlPicker(IPublishedContent). URL Info: {UrlUtility.GetCurrentUrl()}", ex);
+                loggingUtil?.Error($"XrmPath.UmbracoCore caught error on MultiUrlUtility.GetUrlPicker(IPublishedContent). URL Info: {UrlUtility.GetCurrentUrl()}", ex);
             }
 
             return urlPicker;
@@ -160,7 +161,7 @@ namespace XrmPath.UmbracoCore.Utilities
             catch (Exception ex)
             {
                 //Serilog.Log.Error(ex, $"XrmPath.UmbracoCore caught error on MultiUrlUtility.GetUrlPicker(IContent). URL Info: {UrlUtility.GetCurrentUrl()}");
-                //LogHelper.Error($"XrmPath.UmbracoCore caught error on MultiUrlUtility.GetUrlPicker(IContent). URL Info: {UrlUtility.GetCurrentUrl()}", ex);
+                loggingUtil?.Error($"XrmPath.UmbracoCore caught error on MultiUrlUtility.GetUrlPicker(IContent). URL Info: {UrlUtility.GetCurrentUrl()}", ex);
             }
 
             return urlPicker;
@@ -260,7 +261,7 @@ namespace XrmPath.UmbracoCore.Utilities
             {
                 Console.WriteLine(ex.Message);
                 //Serilog.Log.Error(ex, $"XrmPath.UmbracoCore caught error on PublishedContentUtility.GetIdFromLink(). URL Info: {UrlUtility.GetCurrentUrl()}");
-                //LogHelper.Error($"XrmPath.UmbracoCore caught error on PublishedContentUtility.GetIdFromLink(). URL Info: {UrlUtility.GetCurrentUrl()}", ex);
+                loggingUtil?.Error($"XrmPath.UmbracoCore caught error on PublishedContentUtility.GetIdFromLink(). URL Info: {UrlUtility.GetCurrentUrl()}", ex);
             }
 
             return nodeId;

@@ -47,7 +47,7 @@ namespace XrmPath.UmbracoCore.Utilities
             {
                 Console.WriteLine(ex.Message);
                 //Serilog.Log.Error(ex, $"XrmPath.UmbracoCore caught error on ContentUtility.GetContentValue() for DocumentTypeAlias: {propertyAlias}. URL Info: {UrlUtility.GetCurrentUrl()}");
-                //LogHelper.Error($"XrmPath.UmbracoCore caught error on ContentUtility.GetContentValue() for DocumentTypeAlias: {propertyAlias}. URL Info: {UrlUtility.GetCurrentUrl()}", ex);
+                loggingUtil?.Error($"XrmPath.UmbracoCore caught error on ContentUtility.GetContentValue() for DocumentTypeAlias: {propertyAlias}. URL Info: {UrlUtility.GetCurrentUrl()}", ex);
             }
             return result ?? "";
         }
@@ -82,10 +82,10 @@ namespace XrmPath.UmbracoCore.Utilities
             }
             catch(Exception ex)
             {
-                //var aliases = string.Join(",", propertyAliases);
+                var aliases = string.Join(",", propertyAliases);
                 Console.WriteLine(ex.Message);
                 //Serilog.Log.Error(ex, $"XrmPath.UmbracoCore caught error on ContentUtility.GetContentValue() for DocumentTypeAliases: {aliases}. URL Info: {UrlUtility.GetCurrentUrl()}");
-                //LogHelper.Error($"XrmPath.UmbracoCore caught error on ContentUtility.GetContentValue() for DocumentTypeAliases: {aliases}. URL Info: {UrlUtility.GetCurrentUrl()}", ex);
+                loggingUtil?.Error($"XrmPath.UmbracoCore caught error on ContentUtility.GetContentValue() for DocumentTypeAliases: {aliases}. URL Info: {UrlUtility.GetCurrentUrl()}", ex);
             }
             return result ?? "";
         }
@@ -371,7 +371,7 @@ namespace XrmPath.UmbracoCore.Utilities
             {
                 Console.WriteLine(ex.Message);
                 //Serilog.Log.Error(ex, $"XrmPath.UmbracoCore caught error on ContentUtility.GetNodeList(). Content Value: {contentValue}. URL Info: {UrlUtility.GetCurrentUrl()}");
-                //LogHelper.Error($"XrmPath.UmbracoCore caught error on ContentUtility.GetNodeList(). Content Value: {contentValue}. URL Info: {UrlUtility.GetCurrentUrl()}", ex);
+                loggingUtil?.Error($"XrmPath.UmbracoCore caught error on ContentUtility.GetNodeList(). Content Value: {contentValue}. URL Info: {UrlUtility.GetCurrentUrl()}", ex);
             }
 
             return new List<IContent>();
@@ -464,7 +464,7 @@ namespace XrmPath.UmbracoCore.Utilities
             {
                 Console.WriteLine(ex.Message);
                 //Serilog.Log.Error(ex, $"XrmPath.UmbracoCore caught error on ContentUtility.GetUdiString(). URL Info: {UrlUtility.GetCurrentUrl()}");
-                //LogHelper.Error($"XrmPath.UmbracoCore caught error on ContentUtility.GetUdiString(). URL Info: {UrlUtility.GetCurrentUrl()}", ex);
+                loggingUtil?.Error($"XrmPath.UmbracoCore caught error on ContentUtility.GetUdiString(). URL Info: {UrlUtility.GetCurrentUrl()}", ex);
             }
             
             return udi;

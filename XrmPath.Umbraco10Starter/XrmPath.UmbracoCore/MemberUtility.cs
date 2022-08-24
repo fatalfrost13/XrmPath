@@ -3,8 +3,11 @@ using XrmPath.Helpers.Utilities;
 
 namespace XrmPath.UmbracoCore.Utilities
 {
-    public static class MemberUtility
+    public class MemberUtility: BaseInitializer
     {
+        public MemberUtility(ServiceUtility? serviceUtil) : base(serviceUtil)
+        {
+        }
         //private IMember _iMember;
         //public MemberUtility(IMember _member)
         //{
@@ -14,7 +17,7 @@ namespace XrmPath.UmbracoCore.Utilities
         //    }
         //}
 
-        public static string GetMemberValue(this IMember member, string propertyAlias, string defaultValue = "")
+        public string GetMemberValue(IMember member, string propertyAlias, string defaultValue = "")
         {
             var result = defaultValue;
             try
@@ -32,34 +35,34 @@ namespace XrmPath.UmbracoCore.Utilities
             {
                 Console.WriteLine(ex.Message);
                 //Serilog.Log.Error(ex, $"XrmPath.UmbracoCore caught error on MemberUtility.GetMemberValue(). URL Info: {UrlUtility.GetCurrentUrl()}");
-                //LogHelper.Error($"XrmPath.UmbracoCore caught error on MemberUtility.GetMemberValue(). URL Info: {UrlUtility.GetCurrentUrl()}", ex);
+                loggingUtil?.Error($"XrmPath.UmbracoCore caught error on MemberUtility.GetMemberValue(). URL Info: {UrlUtility.GetCurrentUrl()}", ex);
             }
             return result;
         }
 
-        public static bool GetMemberValueBoolean(this IMember member, string alias)
+        public bool GetMemberValueBoolean(IMember member, string alias)
         {
             var boolValue = false;
             try
             {
-                var contentValue = member.GetMemberValue(alias);
+                var contentValue = GetMemberValue(member, alias);
                 boolValue = StringUtility.ToBoolean(contentValue);
             }
             catch(Exception ex)
             {
                 Console.WriteLine(ex.Message);
                 //Serilog.Log.Error(ex, $"XrmPath.UmbracoCore caught error on MemberUtility.GetMemberValueBoolean(). URL Info: {UrlUtility.GetCurrentUrl()}");
-                //LogHelper.Error($"XrmPath.UmbracoCore caught error on MemberUtility.GetMemberValueBoolean(). URL Info: {UrlUtility.GetCurrentUrl()}", ex);
+                loggingUtil?.Error($"XrmPath.UmbracoCore caught error on MemberUtility.GetMemberValueBoolean(). URL Info: {UrlUtility.GetCurrentUrl()}", ex);
             }
             return boolValue;
         }
 
-        public static int GetMemberValueInt(this IMember member, string alias)
+        public int GetMemberValueInt(IMember member, string alias)
         {
             var intValue = 0;
             try
             {
-                var contentValue = member.GetMemberValue(alias);
+                var contentValue = GetMemberValue(member, alias);
 
                 if (!string.IsNullOrEmpty(contentValue))
                 {
@@ -70,7 +73,7 @@ namespace XrmPath.UmbracoCore.Utilities
             {
                 Console.WriteLine(ex.Message);
                 //Serilog.Log.Error(ex, $"XrmPath.UmbracoCore caught error on MemberUtility.GetMemberValueInt(). URL Info: {UrlUtility.GetCurrentUrl()}");
-                //LogHelper.Error($"XrmPath.UmbracoCore caught error on MemberUtility.GetMemberValueInt(). URL Info: {UrlUtility.GetCurrentUrl()}", ex);
+                loggingUtil?.Error($"XrmPath.UmbracoCore caught error on MemberUtility.GetMemberValueInt(). URL Info: {UrlUtility.GetCurrentUrl()}", ex);
             }
             return intValue;
         }

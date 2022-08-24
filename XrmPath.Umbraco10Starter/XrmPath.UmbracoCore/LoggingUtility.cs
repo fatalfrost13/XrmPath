@@ -4,30 +4,25 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using XrmPath.UmbracoCore.Utilities;
 
 namespace XrmPath.UmbracoCore
 {
-    public class LoggingUtility
+    public class LoggingUtility: BaseInitializer
     {
-        private readonly ILogger<object> _logger;
-
-        public LoggingUtility(ILogger<object> logger)
-        {
-            _logger = logger;
-        }
+        public LoggingUtility(ServiceUtility? serviceUtil) : base(serviceUtil){}
 
         public void Information(string message)
         {
-            _logger.LogInformation(message);
+            logger?.LogInformation(message);
         }
         public void Warning(string message)
         {
-            _logger.LogWarning(message);
+            logger?.LogWarning(message);
         }
-
         public void Error(string message, Exception ex)
         {
-            _logger.LogError(message);
+            logger?.LogError(message);
         }
     }
 }

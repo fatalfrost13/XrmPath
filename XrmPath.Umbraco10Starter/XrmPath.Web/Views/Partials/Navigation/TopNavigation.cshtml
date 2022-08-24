@@ -7,11 +7,11 @@
 
 @*@inject IMediaService MediaService*@
 @inject UmbracoHelper umbracoHelper
-@inject ILogger<object> iLogger
+@inject ILogger<object> logger
 
 @inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
 @{
-    var serviceUtil = new ServiceUtility(iLogger, umbracoHelper);
+    var serviceUtil = new ServiceUtility(logger, umbracoHelper);
     var pUtil = serviceUtil.GetPublishedContentUtility();
     var site = Model.Root();
     var selection = site?.Children?.Where(x => x.IsVisible()) ?? Enumerable.Empty<IPublishedContent>();
