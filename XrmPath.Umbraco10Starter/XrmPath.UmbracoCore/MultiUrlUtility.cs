@@ -14,23 +14,28 @@ namespace XrmPath.UmbracoCore.Utilities
     /// <param name="serviceUtil"></param>
     public class MultiUrlUtility: BaseInitializer
     {
-        public MultiUrlUtility(ServiceUtility? serviceUtil) : base(serviceUtil)
-        {
-        }
+        public MultiUrlUtility(ServiceUtility? serviceUtil) : base(serviceUtil) { }
 
         public UrlPicker GetUrlPicker(int nodeId, string alias = "urlPicker")
         {
-            var content = umbracoHelper?.Content(nodeId);
+            if (umbracoHelper == null) {
+                return new UrlPicker();
+            }
+            var content = umbracoHelper.Content(nodeId);
             return GetUrlPicker(content, alias);
         }
 
         public UrlPicker GetUrlPicker(IPublishedContent? content, string alias = "urlPicker")
         {
             var urlPicker = new UrlPicker();
+            if (pcUtil == null)
+            {
+                return urlPicker;
+            }
             try
             {
                 Link? firstLink = null;
-                var stringData = pcUtil?.GetContentValue(content, alias);
+                var stringData = pcUtil.GetContentValue(content, alias);
                 var links = new List<Link>();
                 if (content != null && !string.IsNullOrEmpty(stringData))
                 {
@@ -77,7 +82,7 @@ namespace XrmPath.UmbracoCore.Utilities
 
                 if (string.IsNullOrEmpty(urlPicker.Title))
                 {
-                    urlPicker.Title = pcUtil?.GetTitle(content) ?? "";
+                    urlPicker.Title = pcUtil.GetTitle(content) ?? "";
                 }
 
                 if (urlPicker.Url == null)
@@ -98,18 +103,26 @@ namespace XrmPath.UmbracoCore.Utilities
         public UrlPicker GetUrlPicker(IContent content, string alias = "urlPicker")
         {
             var urlPicker = new UrlPicker();
+
+            if (contentUtil == null) {
+                return urlPicker;
+            }
+
             try
             {
-                var stringData = contentUtil?.GetContentValue(content, alias);
+                var stringData = contentUtil.GetContentValue(content, alias);
                 //var links = JsonConvert.DeserializeObject<JArray>(stringData);
                 //var firstLink = links?.FirstOrDefault();
 
                 Link? firstLink = null;
-                var links = new List<Link?>();
+                var links = new List<Link>();
                 if (!string.IsNullOrEmpty(stringData))
                 {
                     //links = (List<Link>)node.GetProperty(alias).GetValue();
-                    links = (List<Link>)content.GetValue(alias);
+                    var contentValue = content.GetValue(alias);
+                    if (contentValue != null) { 
+                        links = (List<Link>)((List<Link?>)contentValue).Where(i => i != null);
+                    }
                     if (links != null && links.Any())
                     {
                         firstLink = links.FirstOrDefault();
@@ -120,7 +133,7 @@ namespace XrmPath.UmbracoCore.Utilities
                     {
                         firstLink = (Link)obj;
                     }
-                    else
+                    else if(obj != null)
                     {
                         links = (List<Link>)obj;
                         if (links != null && links.Any())
@@ -154,7 +167,7 @@ namespace XrmPath.UmbracoCore.Utilities
 
                 if (string.IsNullOrEmpty(urlPicker.Title))
                 {
-                    urlPicker.Title = contentUtil?.GetTitle(content) ?? "";
+                    urlPicker.Title = contentUtil.GetTitle(content);
                 }
 
                 if (string.IsNullOrEmpty(urlPicker.Url))
@@ -173,14 +186,15 @@ namespace XrmPath.UmbracoCore.Utilities
 
         public string UrlPickerLink(IPublishedContent? navContent, string urlPickerAlias, string property = "")
         {
+            if (navContent == null) {
+                return "";
+            }
             var strTitle = "";
             var strTarget = "";
 
-            var navTitle = navContent?.GetProperty(UmbracoCustomFields.NavigationTitle);
-            if (navTitle != null)
-            {
-                strTitle = navTitle?.GetValue()?.ToString() ?? "";
-            }
+            var navTitle = navContent.GetProperty(UmbracoCustomFields.NavigationTitle);
+            strTitle = navTitle?.GetValue()?.ToString() ?? "";
+            
 
             //Array arr = csvURLPicker.Split(',');
             var urlPicker = navContent != null ? GetUrlPicker(navContent.Id, urlPickerAlias) : new UrlPicker();
@@ -235,25 +249,28 @@ namespace XrmPath.UmbracoCore.Utilities
         public int GetIdFromLink(Link? item)
         {
             //var nodeId = item?.Id ?? 0;
+            if (item == null || umbracoHelper == null || pcUtil == null) {
+                return 0;
+            }
 
             var nodeId = 0;
             try
             {
-                if (item?.Udi != null)
+                if (item.Udi != null)
                 {
                     if (item.Type == LinkType.Content)
                     {
 
-                        var node = umbracoHelper?.Content(item.Udi);
-                        if ((node != null && pcUtil != null) && pcUtil.NodeExists(node))
+                        var node = umbracoHelper.Content(item.Udi);
+                        if (node != null && pcUtil.NodeExists(node))
                         {
                             nodeId = node.Id;
                         }
                     }
                     else if (item.Type == LinkType.Media)
                     {
-                        var node = umbracoHelper?.Media(item.Udi);
-                        if ((node != null && pcUtil != null) && pcUtil.NodeExists(node))
+                        var node = umbracoHelper.Media(item.Udi);
+                        if (node != null && pcUtil.NodeExists(node))
                         {
                             nodeId = node.Id;
                         }

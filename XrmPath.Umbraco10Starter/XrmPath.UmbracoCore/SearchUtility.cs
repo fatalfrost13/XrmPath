@@ -15,9 +15,7 @@ namespace XrmPath.UmbracoCore.Utilities
     /// <param name="serviceUtil"></param>
     public class SearchUtility: BaseInitializer
     {
-        public SearchUtility(ServiceUtility serviceUtil) : base(serviceUtil)
-        {
-        }
+        public SearchUtility(ServiceUtility serviceUtil) : base(serviceUtil) { }
 
         /// <summary>
         /// Documentation can be found here:
@@ -85,15 +83,20 @@ namespace XrmPath.UmbracoCore.Utilities
         private ISearchResults? QuerySearchIndex(string searchTerm, string indexName = "ExternalIndex")
         {
             IIndex? index = null;
-            var indexExists = examineManager?.TryGetIndex(indexName, out index) ?? false;
+
+            if (examineManager == null) {
+                return null;
+            }
+
+            var indexExists = examineManager.TryGetIndex(indexName, out index);
            
-            if (indexExists)
+            if (indexExists && index != null)
             {
-                var searcher = index?.Searcher;
-                IQuery? query = searcher?.CreateQuery(null, BooleanOperation.And);
+                var searcher = index.Searcher;
+                IQuery query = searcher.CreateQuery(null, BooleanOperation.And);
                 //string searchFields = "nodeName,pageTitle,metaDescription,bodyText";
                 var searchFields = ConfigurationModel.SearchableFields;
-                IBooleanOperation? terms = query?.GroupedOr(searchFields.Split(','), searchTerm);
+                IBooleanOperation? terms = query.GroupedOr(searchFields.Split(','), searchTerm);
                 return terms?.Execute();
             }
             else {
@@ -105,20 +108,17 @@ namespace XrmPath.UmbracoCore.Utilities
         public decimal WeightedScore(IPublishedContent? content, decimal score, decimal applyMultiplier = 1)
         {
             var weightedScore = score;
-            var weight = pcUtil?.GetNodeDecimal(content, "weight", 1) ?? 1;
+            if (pcUtil == null) {
+                return weightedScore;
+            }
+            var weight = pcUtil.GetNodeDecimal(content, "weight", 1);
 
             if (weight != 1)
             {
                 weightedScore = score * weight;
             }
 
-            //if (!gsaEnabled)
-            //{
-            //    weightedScore += 1; //set a base of 1
-            //}
-
             weightedScore = weightedScore * applyMultiplier;
-
             return weightedScore;
         }
 
@@ -143,6 +143,11 @@ namespace XrmPath.UmbracoCore.Utilities
         private List<SearchResultItem> GetContentResultItems(IEnumerable<ISearchResult> searchResults)
         {
             var resultItems = new List<SearchResultItem>();
+
+            if (pcUtil == null || umbracoHelper == null) {
+                return resultItems;
+            }
+
             foreach (var searchResult in searchResults)
             {
                 var contentType = searchResult.GetValues("__IndexType").FirstOrDefault();
@@ -151,7 +156,7 @@ namespace XrmPath.UmbracoCore.Utilities
                 { 
                     //only pull certain records
                     var searchResultId = int.Parse(searchResult.Id);
-                    var searchNode = umbracoHelper?.Content(searchResultId);
+                    var searchNode = umbracoHelper.Content(searchResultId);
                     //if (SearchableDocTypes.Contains(searchResult.Fields["nodeTypeAlias"]) &&
                     if (documentType != null && ConfigurationModel.SearchableContentTypesList.Contains(documentType) && resultItems.All(i => i.Id.ToString() != searchResult.Id))
                     {
@@ -168,7 +173,7 @@ namespace XrmPath.UmbracoCore.Utilities
                                 Id = searchResultId,
                                 Score = weightedScore,
                                 OriginalScore = score,
-                                Title = pcUtil?.GetTitle(searchNode) ?? "",
+                                Title = pcUtil.GetTitle(searchNode) ?? "",
                                 Type = "content",
                                 ShortDescription = GetSearchResultItem(searchResult, $"{UmbracoCustomFields.Description},{UmbracoCustomFields.MetaDescription}"),
                                 SubScores = new List<SearchScore> { new SearchScore { NodeId = searchResultId, Score = weightedScore, OriginalScore = score } },
@@ -199,7 +204,7 @@ namespace XrmPath.UmbracoCore.Utilities
                         var topLevelNodeId = FindTopLevelNodeId(searchResultId);
                         if (topLevelNodeId > 0)
                         {
-                            var topLevelNode = umbracoHelper?.Content(topLevelNodeId);
+                            var topLevelNode = umbracoHelper.Content(topLevelNodeId);
                             var resultItemCount = resultItems.Count(i => i.Id == topLevelNodeId);
                             var score = Convert.ToDecimal(searchResult.Score);
                             var weightedScore = WeightedScore(topLevelNode, score);
@@ -213,10 +218,10 @@ namespace XrmPath.UmbracoCore.Utilities
                                             Id = topLevelNode?.Id ?? 0,
                                             //Score = weightedScore,
                                             //OriginalScore = score,
-                                            Title = pcUtil?.GetTitle(topLevelNode) ?? "",
-                                            Url = pcUtil?.GetUrl(topLevelNode) ?? "",
+                                            Title = pcUtil.GetTitle(topLevelNode) ?? "",
+                                            Url = pcUtil.GetUrl(topLevelNode) ?? "",
                                             Type = "content",
-                                            ShortDescription = pcUtil?.GetContentValue(topLevelNode, UmbracoCustomFields.Description) ?? "",
+                                            ShortDescription = pcUtil.GetContentValue(topLevelNode, UmbracoCustomFields.Description) ?? "",
                                             SubScores = new List<SearchScore> { new SearchScore { NodeId = searchResultId, Score = weightedScore, OriginalScore = score } }
                                         };
                                         resultItems.Add(resultItem);
@@ -337,11 +342,15 @@ namespace XrmPath.UmbracoCore.Utilities
         private string SearchResultUrl(ISearchResult searchResult)
         {
             var searchUrl = "";
+            if (pcUtil == null || umbracoHelper == null)
+            {
+                return searchUrl;
+            }
             var nodeId = int.Parse(searchResult.Id);
-            var node = umbracoHelper?.Content(nodeId);
+            var node = umbracoHelper.Content(nodeId);
             if (node?.Id > 0)
             {
-                searchUrl = pcUtil?.GetUrl(node) ?? "";
+                searchUrl = pcUtil.GetUrl(node) ?? "";
             }
 
             return searchUrl;
@@ -361,10 +370,6 @@ namespace XrmPath.UmbracoCore.Utilities
                     {
                         searchItem = searchValue;
                     }
-                    //if (searchResult.Fields.ContainsKey(field))
-                    //{
-                    //    searchItem = searchResult.Fields[field];
-                    //}
                 }
             }
             
@@ -384,13 +389,17 @@ namespace XrmPath.UmbracoCore.Utilities
         {
             var exitLoop = false;
             var topNodeId = 0;
-            var topNode = umbracoHelper?.Content(id);
+
+            if (umbracoHelper == null) {
+                return topNodeId;
+            }
+
+            var topNode = umbracoHelper.Content(id);
 
             if (topNode == null) {
                 return 0;
             }
-            while (exitLoop == false)
-            {
+            while (exitLoop == false)            {
                 if (topNode == null) {
                     exitLoop = true;
                 }
@@ -404,7 +413,7 @@ namespace XrmPath.UmbracoCore.Utilities
                     //keep looking up at the parent directory
                     if (topNode.Parent != null && topNode.Parent.Id > 0)
                     {
-                        topNode = umbracoHelper?.Content(topNode.Parent.Id);
+                        topNode = umbracoHelper.Content(topNode.Parent.Id);
                     }
                     else
                     {

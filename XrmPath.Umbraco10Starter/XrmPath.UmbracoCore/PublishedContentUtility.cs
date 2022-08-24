@@ -22,9 +22,9 @@ namespace XrmPath.UmbracoCore.Utilities
     /// <param name="serviceUtil"></param>
     public class PublishedContentUtility: BaseInitializer
     {
-        public PublishedContentUtility(ServiceUtility? serviceUtil) : base(serviceUtil){}
+        public PublishedContentUtility(ServiceUtility? serviceUtil) : base(serviceUtil) { }
         private readonly object LockExcludeNodesLookup = new object();
-        private List<GenericModel>? _ExcludeNodeFolders { get; set; }
+        private List<GenericModel> _ExcludeNodeFolders { get; set; } = new List<GenericModel>();
 
         public bool NodeExists(IPublishedContent? content)
         {
@@ -44,9 +44,13 @@ namespace XrmPath.UmbracoCore.Utilities
             }
             try
             {
+                if (content == null)
+                {
+                    return result;
+                }
                 if (NodeExists(content))
                 {
-                    var property = content?.GetProperty(propertyAlias);
+                    var property = content.GetProperty(propertyAlias);
                     if (property != null && property.HasValue() && !string.IsNullOrEmpty(property.GetValue()?.ToString()))
                     {
                         result = property.GetValue()?.ToString();
@@ -67,6 +71,10 @@ namespace XrmPath.UmbracoCore.Utilities
             var result = defaultValue;
             try
             {
+                if (content == null)
+                {
+                    return result;
+                }
                 if (NodeExists(content))
                 {
                     foreach (var propertyAlias in propertyAliases)
@@ -74,9 +82,9 @@ namespace XrmPath.UmbracoCore.Utilities
                         if (content.HasProperty(propertyAlias))
                         {
                             var property = content.GetProperty(propertyAlias);
-                            if (property != null && property.HasValue() && !string.IsNullOrEmpty(property.GetValue().ToString()))
+                            if (property != null && property.HasValue() && !string.IsNullOrEmpty(property.GetValue()?.ToString()))
                             {
-                                result = property.GetValue().ToString();
+                                result = property.GetValue()?.ToString();
                             }
 
                             //result = TemplateUtilities.ParseInternalLinks(result);
@@ -100,10 +108,14 @@ namespace XrmPath.UmbracoCore.Utilities
         public string GetUrl(IPublishedContent? content, string alias = "urlPicker")
         {
             var strUrl = "";
+            if (content == null)
+            {
+                return strUrl;
+            }
             if (NodeExists(content))
             {
                 //var reverseProxyFolder = SiteUrlUtility.GetRootFromReverseProxy();
-                var nodeUrl = content?.Url();
+                var nodeUrl = content.Url();
                 strUrl = nodeUrl;
 
                 if (!string.IsNullOrEmpty(alias))
@@ -126,6 +138,10 @@ namespace XrmPath.UmbracoCore.Utilities
         public string GetTarget(IPublishedContent? content, string alias = "urlPicker")
         {
             string strTarget = "_self";
+            if (content == null)
+            {
+                return strTarget;
+            }
             if (NodeExists(content))
             {
                 //check URL Property
@@ -174,6 +190,10 @@ namespace XrmPath.UmbracoCore.Utilities
 
         public decimal GetNodeDecimal(IPublishedContent? content, string alias, decimal defaultValue = 0)
         {
+            if (content == null)
+            {
+                return 0;
+            }
             var decValue = defaultValue;
             var contentValue = GetContentValue(content, alias);
 
@@ -186,6 +206,10 @@ namespace XrmPath.UmbracoCore.Utilities
 
         public double GetNodeDouble(IPublishedContent? content, string alias, double defaultValue = 0)
         {
+            if (content == null)
+            {
+                return 0;
+            }
             var dbValue = defaultValue;
             var contentValue = GetContentValue(content, alias);
 
@@ -198,6 +222,10 @@ namespace XrmPath.UmbracoCore.Utilities
 
         public int GetNodeInt(IPublishedContent? content, string alias)
         {
+            if (content == null)
+            {
+                return 0;
+            }
             var intValue = 0;
             var nodeValue = GetContentValue(content, alias);
             if (!string.IsNullOrEmpty(nodeValue))
@@ -209,6 +237,10 @@ namespace XrmPath.UmbracoCore.Utilities
         }
         public bool GetNodeBoolean(IPublishedContent? content, string alias, bool? defaultBoolean = null)
         {
+            if (content == null)
+            {
+                return false;
+            }
             bool boolValue;
             var contentValue = GetContentValue(content, alias);
 
@@ -224,6 +256,10 @@ namespace XrmPath.UmbracoCore.Utilities
         }
         public List<IPublishedContent> GetNodeList(IPublishedContent? content, string alias)
         {
+            if (content == null)
+            {
+                return new List<IPublishedContent>();
+            }
             var nodeList = new List<IPublishedContent>();
             var contentValue = GetContentValue(content, alias);
 
@@ -271,6 +307,10 @@ namespace XrmPath.UmbracoCore.Utilities
         }
         public IEnumerable<int> GetNodeIdsInherit(IPublishedContent? content, string alias)
         {
+            if (content == null)
+            {
+                return Enumerable.Empty<int>();
+            }
             var nodeListIds = GetNodesInherit(content).SelectMany(i => GetNodeIdsSingle(i, alias));
             var returnIds = nodeListIds.Distinct();
             return returnIds;
@@ -278,20 +318,36 @@ namespace XrmPath.UmbracoCore.Utilities
 
         public IEnumerable<int> GetNodeIdsSingle(IPublishedContent? content, string alias)
         {
+            if (content == null)
+            {
+                return Enumerable.Empty<int>();
+            }
             var nodeList = GetNodeList(content, alias);
             var nodeIds = nodeList.Select(i => i.Id);
             return nodeIds;
         }
         public IEnumerable<IPublishedContent> GetNodesInherit(IPublishedContent? content, string alias = "")
         {
+            if (content == null)
+            {
+                return Enumerable.Empty<IPublishedContent>();
+            }
             return (content?.AncestorsOrSelf().Where(i => string.IsNullOrEmpty(alias) || string.Equals(alias, i.ContentType.Alias, StringComparison.Ordinal)) ?? Enumerable.Empty<IPublishedContent>());
         }
         public IEnumerable<IPublishedContent?> GetNodesInherit(IPublishedContent? content, ISet<string> aliases)
         {
+            if (content == null)
+            {
+                return Enumerable.Empty<IPublishedContent>();
+            }
             return content?.AncestorsOrSelf().Where(i => !aliases.Any() || aliases.Contains(i.ContentType.Alias)) ?? Enumerable.Empty<IPublishedContent>();
         }
         public IPublishedContent? GetContentPicker(IPublishedContent? content, string alias)
         {
+            if (content == null)
+            {
+                return null;
+            }
             IPublishedContent? node = null;
             var nodeList = GetNodeList(content, alias);
             if (nodeList.Any())
@@ -306,8 +362,12 @@ namespace XrmPath.UmbracoCore.Utilities
         /// <param name="content"></param>
         /// <param name="alias"></param>
         /// <returns></returns>
-        public IPublishedContent? GetNodeTrueBoolInherit(IPublishedContent content, string alias = "")
+        public IPublishedContent? GetNodeTrueBoolInherit(IPublishedContent? content, string alias = "")
         {
+            if (content == null)
+            {
+                return null;
+            }
             if (!string.IsNullOrEmpty(alias))
             {
                 var node = content.AncestorsOrSelf()
@@ -324,14 +384,22 @@ namespace XrmPath.UmbracoCore.Utilities
             return null;
         }
 
-        public string GetContentColor(IPublishedContent content, string alias, string? defaultColor = null)
+        public string GetContentColor(IPublishedContent? content, string alias, string? defaultColor = null)
         {
+            if (content == null)
+            {
+                return "";
+            }
             var colorModel = GetContentColorModel(content, alias, defaultColor);
-            return colorModel.ColorValue;
+            return colorModel?.ColorValue ?? "";
         }
 
-        public ColorPickerModel GetContentColorModel(IPublishedContent content, string alias, string? defaultColor = null)
+        public ColorPickerModel GetContentColorModel(IPublishedContent? content, string alias, string? defaultColor = null)
         {
+            if (content == null)
+            {
+                return new ColorPickerModel();
+            }
             var color = !string.IsNullOrEmpty(GetContentValue(content, alias)) ? GetContentValue(content, alias) : null;
             ColorPickerModel? colorModel = new ColorPickerModel();
 
@@ -360,8 +428,12 @@ namespace XrmPath.UmbracoCore.Utilities
 
             return colorModel ?? new ColorPickerModel();
         }
-        public bool NodeHidden(IPublishedContent content, string alias = "umbracoNaviHide")
+        public bool NodeHidden(IPublishedContent? content, string alias = "umbracoNaviHide")
         {
+            if (content == null)
+            {
+                return false;
+            }
             if (!content.HasProperty(alias))
             {
                 //only check if hidden if property exists.
@@ -371,8 +443,12 @@ namespace XrmPath.UmbracoCore.Utilities
             return hidden;
         }
 
-        public bool NodeHiddenFromSearch(IPublishedContent content, string alias = "hideFromSearch")
+        public bool NodeHiddenFromSearch(IPublishedContent? content, string alias = "hideFromSearch")
         {
+            if (content == null)
+            {
+                return false;
+            }
             if (!content.HasProperty(alias))
             {
                 //only check if hidden if property exists.
@@ -414,8 +490,12 @@ namespace XrmPath.UmbracoCore.Utilities
             }
         }
 
-        public bool IsExcludedContent(IPublishedContent content)
+        public bool IsExcludedContent(IPublishedContent? content)
         {
+            if (content == null)
+            {
+                return false;
+            }
             var excludedFolderIds = ExcludeNodeFolders;
             foreach (var excludedFolder in excludedFolderIds)
             {
@@ -456,52 +536,83 @@ namespace XrmPath.UmbracoCore.Utilities
         //    return hasAccess;
         //}
 
-        public int FindChildNodeId(IPublishedContent content, ISet<string> nodeTypeAliasSet)
+        public int FindChildNodeId(IPublishedContent? content, ISet<string> nodeTypeAliasSet)
         {
+            if (content == null) {
+                return 0;
+            }
             var firstChildNode = FindChildNode(content, nodeTypeAliasSet)?.Id ?? 0;
             return firstChildNode;
         }
-        public int FindChildNodeId(IPublishedContent content, string nodeTypeAlias)
+        public int FindChildNodeId(IPublishedContent? content, string nodeTypeAlias)
         {
+            if (content == null)
+            {
+                return 0;
+            }
             var firstChildNode = FindChildNode(content, nodeTypeAlias)?.Id ?? 0;
             return firstChildNode;
         }
-        public IPublishedContent? FindChildNode(IPublishedContent content, ISet<string> nodeTypeAliasSet)
+        public IPublishedContent? FindChildNode(IPublishedContent? content, ISet<string> nodeTypeAliasSet)
         {
+            if (content == null)
+            {
+                return null;
+            }
             if (content == null || content.Id == 0 || NodeHidden(content) || !HasAccess(content) || content.Children == null) return null;
             return content?.Children?.FirstOrDefault(child => NodeExists(child) && !NodeHidden(child) && nodeTypeAliasSet.Contains(child.ContentType.Alias));
         }
-        public IPublishedContent? FindChildNode(IPublishedContent content, string nodeTypeAlias)
+        public IPublishedContent? FindChildNode(IPublishedContent? content, string nodeTypeAlias)
         {
+            if (content == null)
+            {
+                return null;
+            }
             if (content == null || content.Id == 0 || NodeHidden(content) || !HasAccess(content) || content.Children == null) return null;
             return content.Children.FirstOrDefault(child => NodeExists(child) && !NodeHidden(child) && HasAccess(content) && string.Equals(nodeTypeAlias, child.ContentType.Alias, StringComparison.Ordinal));
         }
 
-        public int FindContainerNodeId(IPublishedContent content, string nodeTypeAlias = "")
+        public int FindContainerNodeId(IPublishedContent? content, string nodeTypeAlias = "")
         {
+            if (content == null)
+            {
+                return 0;
+            }
             var containerId = FindContainerNode(content, nodeTypeAlias)?.Id ?? 0;
             return containerId;
         }
 
-        public int FindContainerNodeId(IPublishedContent content, ISet<string> nodeTypeAliases)
+        public int FindContainerNodeId(IPublishedContent? content, ISet<string> nodeTypeAliases)
         {
+            if (content == null)
+            {
+                return 0;
+            }
             var containerId = FindContainerNode(content, nodeTypeAliases)?.Id ?? 0;
             return containerId;
         }
 
-        public IPublishedContent? FindContainerNode(IPublishedContent content, string alias)
+        public IPublishedContent? FindContainerNode(IPublishedContent? content, string alias)
         {
+            if (content == null)
+            {
+                return null;
+            }
             var containerNode = GetNodesInherit(content, alias).FirstOrDefault();
             return containerNode;
         }
 
-        public IPublishedContent? FindContainerNode(IPublishedContent content, ISet<string> aliases)
+        public IPublishedContent? FindContainerNode(IPublishedContent? content, ISet<string> aliases)
         {
+            if (content == null)
+            {
+                return null;
+            }
             var containerNode = GetNodesInherit(content, aliases).FirstOrDefault();
             return containerNode;
         }
 
-        public IEnumerable<IPublishedContent> FindAllNodes(IPublishedContent content, ISet<string> nodeTypeAliasSet, bool includeHidden = false)
+        public IEnumerable<IPublishedContent> FindAllNodes(IPublishedContent? content, ISet<string> nodeTypeAliasSet, bool includeHidden = false)
         {
             if (content == null || content.Id == 0)
             {
@@ -511,7 +622,7 @@ namespace XrmPath.UmbracoCore.Utilities
             return allNodes;
         }
 
-        public IEnumerable<IPublishedContent> FindAllNodes(IPublishedContent content, string nodeTypeAlias, bool includeHidden = false)
+        public IEnumerable<IPublishedContent> FindAllNodes(IPublishedContent? content, string nodeTypeAlias, bool includeHidden = false)
         {
             if (content == null || content.Id == 0)
             {
@@ -521,20 +632,28 @@ namespace XrmPath.UmbracoCore.Utilities
             return allNodes;
         }
 
-        public string GetDate(IPublishedContent content, string dateFormat = "", string alias = "date")
+        public string GetDate(IPublishedContent? content, string dateFormat = "", string alias = "date")
         {
+            if (content == null)
+            {
+                return "";
+            }
             var date = GetDateTime(content, alias);
             if (string.IsNullOrEmpty(dateFormat))
             {
                 //dateFormat = ConfigurationManager.AppSettings["dateFormat"];
                 dateFormat = appSettings?.DateFormat ?? "";
             }
-            var strDate = date.ToString(dateFormat);
+            var strDate = date?.ToString(dateFormat) ?? "";
             return strDate;
         }
 
-        public DateTime GetDateTime(IPublishedContent content, string alias = "date")
+        public DateTime? GetDateTime(IPublishedContent? content, string alias = "date")
         {
+            if (content == null)
+            {
+                return null;
+            }
             var date = content.CreateDate;
             var dateValue = GetContentValue(content, alias);
             if (!string.IsNullOrEmpty(dateValue))
@@ -544,8 +663,12 @@ namespace XrmPath.UmbracoCore.Utilities
             return date;
         }
 
-        public DateTime? GetNullableDateTime(IPublishedContent content, string alias = "date", DateTime? defaultDate = null)
+        public DateTime? GetNullableDateTime(IPublishedContent? content, string alias = "date", DateTime? defaultDate = null)
         {
+            if (content == null)
+            {
+                return null;
+            }
             var date = defaultDate;
             var dateValue = GetContentValue(content, alias);
             if (!string.IsNullOrEmpty(dateValue))
@@ -561,6 +684,10 @@ namespace XrmPath.UmbracoCore.Utilities
         }
         public string GetUdiString(IPublishedContent? content)
         {
+            if (content == null)
+            {
+                return "";
+            }
             var udi = Udi.Create(Constants.UdiEntityType.Document, content.Key).ToString();
             return udi;
         }

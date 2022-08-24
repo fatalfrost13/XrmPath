@@ -3,7 +3,7 @@ namespace XrmPath.UmbracoCore.Models
 {
     public class AppSettingsModel
     {
-        public string DateFormat { get; set; } = "";
+        public string? DateFormat { get; set; }
     }
 }
 

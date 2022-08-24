@@ -9,9 +9,7 @@ namespace XrmPath.UmbracoCore.Utilities
         /// Dependencies: Logger(optional)
         /// </summary>
         /// <param name="serviceUtil"></param>
-        public MemberUtility(ServiceUtility? serviceUtil) : base(serviceUtil)
-        {
-        }
+        public MemberUtility(ServiceUtility? serviceUtil) : base(serviceUtil) { }
         //private IMember _iMember;
         //public MemberUtility(IMember _member)
         //{
@@ -21,9 +19,14 @@ namespace XrmPath.UmbracoCore.Utilities
         //    }
         //}
 
-        public string GetMemberValue(IMember member, string propertyAlias, string defaultValue = "")
+        public string GetMemberValue(IMember? member, string propertyAlias, string defaultValue = "")
         {
             var result = defaultValue;
+
+            if (member == null) {
+                return result;
+            }
+
             try
             {
                 if (member != null && member.Id > 0 && member.HasProperty(propertyAlias))
@@ -44,9 +47,13 @@ namespace XrmPath.UmbracoCore.Utilities
             return result;
         }
 
-        public bool GetMemberValueBoolean(IMember member, string alias)
+        public bool GetMemberValueBoolean(IMember? member, string alias)
         {
             var boolValue = false;
+            if (member == null)
+            {
+                return boolValue;
+            }
             try
             {
                 var contentValue = GetMemberValue(member, alias);
@@ -61,9 +68,13 @@ namespace XrmPath.UmbracoCore.Utilities
             return boolValue;
         }
 
-        public int GetMemberValueInt(IMember member, string alias)
+        public int GetMemberValueInt(IMember? member, string alias)
         {
             var intValue = 0;
+            if (member == null)
+            {
+                return intValue;
+            }
             try
             {
                 var contentValue = GetMemberValue(member, alias);

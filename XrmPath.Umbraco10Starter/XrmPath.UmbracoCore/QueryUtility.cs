@@ -11,9 +11,7 @@ namespace XrmPath.UmbracoCore.Utilities
         /// Dependencies: Logger(optional), UmbracoHelper
         /// </summary>
         /// <param name="serviceUtil"></param>
-        public QueryUtility(ServiceUtility serviceUtil) : base(serviceUtil)
-        {
-        }
+        public QueryUtility(ServiceUtility serviceUtil) : base(serviceUtil) { }
 
         /// <summary>
         /// </summary>
@@ -21,7 +19,10 @@ namespace XrmPath.UmbracoCore.Utilities
         /// <returns></returns>
         public IEnumerable<IPublishedContent> GetPublishedContentByTypeSingle(string alias = "")
         {
-            var nodeList = !string.IsNullOrEmpty(alias) ? umbracoHelper?.ContentAtXPath($"//{alias}") : Enumerable.Empty<IPublishedContent>();
+            if (umbracoHelper == null) {
+                return Enumerable.Empty<IPublishedContent>();
+            }
+            var nodeList = !string.IsNullOrEmpty(alias) ? umbracoHelper.ContentAtXPath($"//{alias}") : Enumerable.Empty<IPublishedContent>();
             return nodeList ?? Enumerable.Empty<IPublishedContent>();
         }
 
@@ -39,10 +40,10 @@ namespace XrmPath.UmbracoCore.Utilities
                 return nodeList;
             }
 
-            if (string.IsNullOrEmpty(aliases))
+            if (string.IsNullOrEmpty(aliases) && umbracoHelper != null)
             {
                 var nodeList = new List<IPublishedContent>();
-                var rootNodes = umbracoHelper?.ContentAtRoot();
+                var rootNodes = umbracoHelper.ContentAtRoot();
                 if (rootNodes != null) {
                     foreach (var rootNode in rootNodes)
                     {
@@ -54,7 +55,6 @@ namespace XrmPath.UmbracoCore.Utilities
                     }
                 }
                 return nodeList;
-                //return Enumerable.Empty<IPublishedContent>();
             }
 
             return GetPublishedContentByTypeSingle(aliases);
@@ -66,9 +66,9 @@ namespace XrmPath.UmbracoCore.Utilities
             {
                 aliases = ConfigurationModel.WebsiteContentTypes;
             }
-            if (!string.IsNullOrEmpty(uniqueId))
+            if (!string.IsNullOrEmpty(uniqueId) && pcUtil != null)
             {
-                var uniquePage = GetPublishedContentByType(aliases).FirstOrDefault(i => pcUtil?.GetContentValue(i, UmbracoCustomFields.UniqueId) == uniqueId);
+                var uniquePage = GetPublishedContentByType(aliases).FirstOrDefault(i => pcUtil.GetContentValue(i, UmbracoCustomFields.UniqueId) == uniqueId);
                 return uniquePage;
 
             }
@@ -82,7 +82,11 @@ namespace XrmPath.UmbracoCore.Utilities
 
         public IPublishedContent? GetNodeByFieldValue(string docTypeAliases, string fieldAlias, string fieldValue)
         {
-            var nodeByFieldValue = GetPublishedContentByType(docTypeAliases).FirstOrDefault(i => !string.IsNullOrEmpty(fieldValue) && pcUtil?.GetContentValue(i, fieldAlias) == fieldValue);
+            if (pcUtil == null) 
+            {
+                return null;
+            }
+            var nodeByFieldValue = GetPublishedContentByType(docTypeAliases).FirstOrDefault(i => !string.IsNullOrEmpty(fieldValue) && pcUtil.GetContentValue(i, fieldAlias) == fieldValue);
             return nodeByFieldValue;
         }
     }
