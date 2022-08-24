@@ -14,6 +14,10 @@ using XrmPath.UmbracoCore.Models.Definitions;
 
 namespace XrmPath.UmbracoCore.Utilities
 {
+    /// <summary>
+    /// Dependencies: Logger(optional), UmbracoHelper, MediaService
+    /// </summary>
+    /// <param name="serviceUtil"></param>
     public class PublishedContentUtility: BaseInitializer
     {
         public PublishedContentUtility(ServiceUtility? serviceUtil) : base(serviceUtil){}
@@ -484,10 +488,11 @@ namespace XrmPath.UmbracoCore.Utilities
         public string GetDate(IPublishedContent content, string dateFormat = "", string alias = "date")
         {
             var date = GetDateTime(content, alias);
-            //if (string.IsNullOrEmpty(dateFormat))
-            //{
-            //    dateFormat = ConfigurationManager.AppSettings["dateFormat"];
-            //}
+            if (string.IsNullOrEmpty(dateFormat))
+            {
+                //dateFormat = ConfigurationManager.AppSettings["dateFormat"];
+                dateFormat = appSettings?.DateFormat ?? "";
+            }
             var strDate = date.ToString(dateFormat);
             return strDate;
         }

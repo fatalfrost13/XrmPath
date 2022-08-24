@@ -9,6 +9,10 @@ using XrmPath.UmbracoCore.Definitions;
 
 namespace XrmPath.UmbracoCore.Utilities
 {
+    /// <summary>
+    /// Dependencies: Logger(optional), UmbracoHelper, MediaService, ExamineManager
+    /// </summary>
+    /// <param name="serviceUtil"></param>
     public class SearchUtility: BaseInitializer
     {
         public SearchUtility(ServiceUtility serviceUtil) : base(serviceUtil)

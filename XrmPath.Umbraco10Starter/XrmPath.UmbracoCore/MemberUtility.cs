@@ -5,6 +5,10 @@ namespace XrmPath.UmbracoCore.Utilities
 {
     public class MemberUtility: BaseInitializer
     {
+        /// <summary>
+        /// Dependencies: Logger(optional)
+        /// </summary>
+        /// <param name="serviceUtil"></param>
         public MemberUtility(ServiceUtility? serviceUtil) : base(serviceUtil)
         {
         }

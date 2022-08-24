@@ -9,8 +9,11 @@ using XrmPath.UmbracoCore.Definitions;
 
 namespace XrmPath.UmbracoCore.Utilities
 {
-    //This Utility will make database calls and does not use Umbraco Cached content
-
+    /// <summary>
+    /// This Utility will make database calls and does not use Umbraco Cached content
+    /// Dependencies: Logger(optional), UmbracoHelper, ContentService, ContentTypeService
+    /// </summary>
+    /// <param name="serviceUtil"></param>
     public class ContentUtility: BaseInitializer
     {
         public ContentUtility(ServiceUtility? serviceUtil): base(serviceUtil)
@@ -209,10 +212,11 @@ namespace XrmPath.UmbracoCore.Utilities
         public string GetDate(IContent content, string dateFormat = "", string alias = "date")
         {
             var date = GetDateTime(content, alias);
-            //if (string.IsNullOrEmpty(dateFormat))
-            //{
-            //    dateFormat = ConfigurationManager.AppSettings["dateFormat"];
-            //}
+            if (string.IsNullOrEmpty(dateFormat))
+            {
+                //dateFormat = ConfigurationManager.AppSettings["dateFormat"];
+                dateFormat = appSettings?.DateFormat ?? "";
+            }
             var strDate = date.ToString(dateFormat);
             return strDate;
         }

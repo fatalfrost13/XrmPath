@@ -7,6 +7,10 @@ namespace XrmPath.UmbracoCore.Utilities
 {
     public class QueryUtility: BaseInitializer
     {
+        /// <summary>
+        /// Dependencies: Logger(optional), UmbracoHelper
+        /// </summary>
+        /// <param name="serviceUtil"></param>
         public QueryUtility(ServiceUtility serviceUtil) : base(serviceUtil)
         {
         }

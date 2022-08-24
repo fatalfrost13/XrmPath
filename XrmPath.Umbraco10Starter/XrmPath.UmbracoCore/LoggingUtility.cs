@@ -8,6 +8,10 @@ using XrmPath.UmbracoCore.Utilities;
 
 namespace XrmPath.UmbracoCore
 {
+    /// <summary>
+    /// Dependencies: Logger
+    /// </summary>
+    /// <param name="serviceUtil"></param>
     public class LoggingUtility: BaseInitializer
     {
         public LoggingUtility(ServiceUtility? serviceUtil) : base(serviceUtil){}

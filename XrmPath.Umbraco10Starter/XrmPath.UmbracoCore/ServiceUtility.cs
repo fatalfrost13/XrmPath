@@ -59,6 +59,10 @@ namespace XrmPath.UmbracoCore.Utilities
         {
             return _logger;
         }
+        public AppSettingsModel? GetAppSettings()
+        {
+            return _appSettings;
+        }
         public LoggingUtility? GetLoggingUtility()
         {
             if (_loggingUtil == null && _logger != null)

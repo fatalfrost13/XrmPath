@@ -1,5 +1,6 @@
 ﻿using Examine;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,6 +9,7 @@ using System.Threading.Tasks;
 using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Web.Common;
 using Umbraco.Cms.Web.Common.Security;
+using XrmPath.UmbracoCore.Models;
 
 namespace XrmPath.UmbracoCore.Utilities
 {
@@ -30,6 +32,7 @@ namespace XrmPath.UmbracoCore.Utilities
         protected IContentTypeService? contentTypeService;
         protected IMemberSignInManager? memberSignInManager;
         protected ILogger<object>? logger;
+        protected AppSettingsModel? appSettings;
 
         public BaseInitializer(ServiceUtility? serviceUtil) {
             if (_serviceUtil == null && serviceUtil != null)
@@ -67,6 +70,10 @@ namespace XrmPath.UmbracoCore.Utilities
             if (memberSignInManager == null)
             {
                 memberSignInManager = _serviceUtil?.GetMemberSignInManager();
+            }
+            if (appSettings == null) 
+            { 
+                appSettings = _serviceUtil?.GetAppSettings();
             }
         }
         protected LoggingUtility? loggingUtil

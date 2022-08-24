@@ -109,7 +109,7 @@ namespace XrmPath.Helpers.Utilities
             return fileSavePath;
         }
 
-        public static string? GetDocumentLoaderLink(string fileName, string folderPath)
+        public static string? GetDocumentLoaderLink(string fileName, string folderPath = "")
         {
             string? documentLoaderUrl = null;
             try

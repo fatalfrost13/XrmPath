@@ -16,7 +16,7 @@ namespace XrmPath.UmbracoCore.Utilities
         protected readonly IExamineManager? _examineManager;
         protected readonly IContentService? _contentService;
         protected readonly IContentTypeService? _contentTypeService;
-        protected readonly IOptions<AppSettingsModel>? _appSettings;
+        protected readonly AppSettingsModel? _appSettings;
         protected readonly IMemberSignInManager? _memberSignInManager;
         public BaseUtility(ILogger<object>? logger, UmbracoHelper? umbracoHelper, IMediaService? mediaService, IExamineManager? examineManager, IContentService? contentService, IContentTypeService? contentTypeService, IMemberSignInManager? memberSignInManager, IOptions<AppSettingsModel>? appSettings)
         {
@@ -46,7 +46,7 @@ namespace XrmPath.UmbracoCore.Utilities
             }
             if (appSettings != null && _appSettings == null)
             {
-                _appSettings = appSettings;
+                _appSettings = appSettings?.Value;
             }
             if (memberSignInManager != null && _memberSignInManager == null)
             {

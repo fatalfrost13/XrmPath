@@ -8,6 +8,10 @@ using XrmPath.UmbracoCore.Definitions;
 
 namespace XrmPath.UmbracoCore.Utilities
 {
+    /// <summary>
+    /// Dependencies: Logger(optional), UmbracoHelper, MediaService
+    /// </summary>
+    /// <param name="serviceUtil"></param>
     public class MediaUtility: BaseInitializer
     {
         public MediaUtility(ServiceUtility? serviceUtil): base(serviceUtil)

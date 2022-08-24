@@ -8,6 +8,10 @@ using XrmPath.UmbracoCore.Models;
 
 namespace XrmPath.UmbracoCore.Utilities
 {
+    /// <summary>
+    /// Dependencies: Logger(optional), UmbracoHelper
+    /// </summary>
+    /// <param name="serviceUtil"></param>
     public class MultiUrlUtility: BaseInitializer
     {
         public MultiUrlUtility(ServiceUtility? serviceUtil) : base(serviceUtil)
