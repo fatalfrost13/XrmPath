@@ -12,11 +12,14 @@
         public static readonly string FileTextContent = "fileTextContent";
         public static readonly string Grid = "grid";
         public static readonly string Hidden = "umbracoNavihide";
+        public static readonly string History = "history";
         public static readonly string KeywordTags = "keywordTags";
         public static readonly string MetaDescription = "metaDescription";
         public static readonly string MetaKeywords = "metaKeywords";
         public static readonly string NavigationTitle = "navigationTitle";
+        public static readonly string OldUrl = "oldUrl";
         public static readonly string PageTitle = "pageTitle";
+        public static readonly string SourceNode = "sourceNode";
         public static readonly string Tags = "tags";
         public static readonly string Title = "title";
         public static readonly string UniqueId = "uniqueId";

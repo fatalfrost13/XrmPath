@@ -4,9 +4,11 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Logging;
 using Newtonsoft.Json;
 using System.Data;
+using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.Models.PublishedContent;
 using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Web.Common;
+using Umbraco.Extensions;
 using XrmPath.Helpers.Model;
 using XrmPath.Helpers.Utilities;
 using XrmPath.UmbracoCore.Models;
@@ -59,6 +61,40 @@ namespace XrmPath.UmbracoCore.Utilities
                 loggingUtil?.Error($"XrmPath.UmbracoCore caught error on PublishedContentUtility.GetContentValue() for DocumentTypeAlias: {propertyAlias}. URL Info: {UrlUtility.GetCurrentUrl()}", ex);
             }
             return result ?? String.Empty;
+        }
+        public string GetContentValue(IPublishedContent? content, ISet<string> propertyAliases, string defaultValue = "")
+        {
+            var result = defaultValue;
+            try
+            {
+                if (NodeExists(content))
+                {
+                    foreach (var propertyAlias in propertyAliases)
+                    {
+                        if (content.HasProperty(propertyAlias))
+                        {
+                            var property = content.GetProperty(propertyAlias);
+                            if (property != null && property.HasValue() && !string.IsNullOrEmpty(property.GetValue().ToString()))
+                            {
+                                result = property.GetValue().ToString();
+                            }
+
+                            //result = TemplateUtilities.ParseInternalLinks(result);
+                            if (!string.IsNullOrEmpty(result))
+                            {
+                                return result;
+                            }
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                var aliases = string.Join(",", propertyAliases);
+                //Serilog.Log.Error(ex, $"XrmPath.UmbracoCore caught error on PublishedContentUtility.GetContentValue() for DocumentTypeAliases: {aliases}. URL Info: {UrlUtility.GetCurrentUrl()}");
+                loggingUtil?.Error($"XrmPath.UmbracoCore caught error on PublishedContentUtility.GetContentValue() for DocumentTypeAliases: {aliases}. URL Info: {UrlUtility.GetCurrentUrl()}", ex);
+            }
+            return result ?? "";
         }
 
         public string GetUrl(IPublishedContent? content, string alias = "urlPicker")
@@ -148,7 +184,7 @@ namespace XrmPath.UmbracoCore.Utilities
             return decValue;
         }
 
-        public double GetNodeDouble(IPublishedContent content, string alias, double defaultValue = 0)
+        public double GetNodeDouble(IPublishedContent? content, string alias, double defaultValue = 0)
         {
             var dbValue = defaultValue;
             var contentValue = GetContentValue(content, alias);
@@ -160,7 +196,7 @@ namespace XrmPath.UmbracoCore.Utilities
             return dbValue;
         }
 
-        public int GetNodeInt(IPublishedContent content, string alias)
+        public int GetNodeInt(IPublishedContent? content, string alias)
         {
             var intValue = 0;
             var nodeValue = GetContentValue(content, alias);
@@ -171,7 +207,7 @@ namespace XrmPath.UmbracoCore.Utilities
 
             return intValue;
         }
-        public bool GetNodeBoolean(IPublishedContent content, string alias, bool? defaultBoolean = null)
+        public bool GetNodeBoolean(IPublishedContent? content, string alias, bool? defaultBoolean = null)
         {
             bool boolValue;
             var contentValue = GetContentValue(content, alias);
@@ -522,6 +558,11 @@ namespace XrmPath.UmbracoCore.Utilities
                 }
             }
             return date;
+        }
+        public string GetUdiString(IPublishedContent? content)
+        {
+            var udi = Udi.Create(Constants.UdiEntityType.Document, content.Key).ToString();
+            return udi;
         }
     }
 }
