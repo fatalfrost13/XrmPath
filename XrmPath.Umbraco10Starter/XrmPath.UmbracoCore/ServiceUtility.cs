@@ -29,6 +29,25 @@ namespace XrmPath.UmbracoCore.Utilities
                 _pcUtil = new PublishedContentUtility(this);
             }
         }
+
+        /// <summary>
+        /// This is an option to have a singleton instance of ServiceUtility to avoid creating this object multiple times.
+        /// CreateInstance needs to be the first thing that runs. Then once that's created, we can pull the singleton 'Instance'.
+        /// </summary>
+        //private static Lazy<ServiceUtility>? lazy = null;
+        //public static ServiceUtility CreateInstance(ILogger<object>? logger = null, UmbracoHelper? umbracoHelper = null, IMediaService? mediaService = null, IExamineManager? examineManager = null, IContentService? contentService = null, IContentTypeService? contentTypeService = null, IMemberManager? memberManager = null, IMemberSignInManager? memberSignInManager = null, IOptions<AppSettingsModel>? appSettings = null)
+        //{
+        //    if (lazy == null)
+        //    {
+        //        lazy = new Lazy<ServiceUtility>(() => new ServiceUtility(logger, umbracoHelper, mediaService, examineManager, contentService, contentTypeService, memberManager, memberSignInManager, appSettings));
+        //    }
+        //    return lazy.Value;
+        //}
+        //public static ServiceUtility? Instance
+        //{
+        //    get { return lazy?.Value; }
+        //}
+
         public PublishedContentUtility? GetPublishedContentUtility()
         {
             return _pcUtil;
