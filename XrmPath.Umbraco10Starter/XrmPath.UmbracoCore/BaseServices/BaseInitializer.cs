@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Umbraco.Cms.Core.Security;
 using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Web.Common;
 using Umbraco.Cms.Web.Common.Security;
@@ -25,12 +26,14 @@ namespace XrmPath.UmbracoCore.BaseServices
         protected MediaUtility? _mediaUtil;
         protected QueryUtility? _queryUtil;
         protected MemberUtility? _memberUtil;
+        protected MembershipUtility? _membershipUtil;
 
         protected UmbracoHelper? umbracoHelper;
         protected IExamineManager? examineManager;
         protected IMediaService? mediaService;
         protected IContentService? contentService;
         protected IContentTypeService? contentTypeService;
+        protected IMemberManager? memberManager;
         protected IMemberSignInManager? memberSignInManager;
         protected ILogger<object>? logger;
         protected AppSettingsModel? appSettings;
@@ -65,9 +68,9 @@ namespace XrmPath.UmbracoCore.BaseServices
             {
                 contentTypeService = _serviceUtil?.GetContentServiceType();
             }
-            if (memberSignInManager == null)
+            if (memberManager == null)
             {
-                memberSignInManager = _serviceUtil?.GetMemberSignInManager();
+                memberManager = _serviceUtil?.GetMemberManager();
             }
             if (memberSignInManager == null)
             {
@@ -154,6 +157,17 @@ namespace XrmPath.UmbracoCore.BaseServices
                     _memberUtil = _serviceUtil?.GetMemberUtility();
                 }
                 return _memberUtil;
+            }
+        }
+        protected MembershipUtility? membershipUtil
+        {
+            get
+            {
+                if (_membershipUtil == null)
+                {
+                    _membershipUtil = _serviceUtil?.GetMembershipUtility();
+                }
+                return _membershipUtil;
             }
         }
     }

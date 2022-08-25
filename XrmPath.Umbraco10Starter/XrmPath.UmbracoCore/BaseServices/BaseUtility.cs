@@ -1,6 +1,7 @@
 ﻿using Examine;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Umbraco.Cms.Core.Security;
 using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Web.Common;
 using Umbraco.Cms.Web.Common.Security;
@@ -17,8 +18,9 @@ namespace XrmPath.UmbracoCore.BaseServices
         protected readonly IContentService? _contentService;
         protected readonly IContentTypeService? _contentTypeService;
         protected readonly AppSettingsModel? _appSettings;
+        protected readonly IMemberManager? _memberManager;
         protected readonly IMemberSignInManager? _memberSignInManager;
-        public BaseUtility(ILogger<object>? logger, UmbracoHelper? umbracoHelper, IMediaService? mediaService, IExamineManager? examineManager, IContentService? contentService, IContentTypeService? contentTypeService, IMemberSignInManager? memberSignInManager, IOptions<AppSettingsModel>? appSettings)
+        public BaseUtility(ILogger<object>? logger, UmbracoHelper? umbracoHelper, IMediaService? mediaService, IExamineManager? examineManager, IContentService? contentService, IContentTypeService? contentTypeService, IMemberManager? memberManager, IMemberSignInManager? memberSignInManager, IOptions<AppSettingsModel>? appSettings)
         {
             if (logger != null && _logger == null)
             {
@@ -47,6 +49,10 @@ namespace XrmPath.UmbracoCore.BaseServices
             if (appSettings != null && _appSettings == null)
             {
                 _appSettings = appSettings?.Value;
+            }
+            if (memberManager != null && _memberManager == null)
+            {
+                _memberManager = memberManager;
             }
             if (memberSignInManager != null && _memberSignInManager == null)
             {

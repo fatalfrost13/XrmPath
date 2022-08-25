@@ -496,30 +496,43 @@ namespace XrmPath.UmbracoCore.Utilities
             return false;
         }
 
-        public bool HasAccess(IPublishedContent content) { return true; }
-        //public bool HasAccess(IPublishedContent content)
-        //{
-        //    var hasAccess = true;
-        //    var isProtected = ServiceUtility.PublicAccessService.IsProtected(content.Path);
-        //    if (isProtected)
-        //    {
-        //        hasAccess = false;
-        //        if (MembershipHelper.UserIsAuthenticated())
-        //        {
-        //            try
-        //            {
-        //                hasAccess = ServiceUtility.PublicAccessService.HasAccess(content.Path, Membership.GetUser(), Roles.Provider);
+        public bool HasAccess(IPublishedContent content) 
+        {
+            var hasAccess = HasAccessAsync(content).Result;
+            return hasAccess; 
+        }
+        public async Task<bool> HasAccessAsync(IPublishedContent? content)
+        {
+            var hasAccess = true;
+            if (membershipUtil == null || content == null || memberManager == null)
+            {
+                return hasAccess;
+            }
 
-        //            }
-        //            catch (Exception ex)
-        //            {
-        //                //Serilog.Log.Warning($"XrmPath.UmbracoCore caught error on PublishedContentUtility.HasAccess(): {ex}");
-        //                LogHelper.Warning($"XrmPath.UmbracoCore caught error on PublishedContentUtility.HasAccess(): {ex}");
-        //            }
-        //        }
-        //    }
-        //    return hasAccess;
-        //}
+            //var isProtected = ServiceUtility.PublicAccessService.IsProtected(content.Path);
+            var isProtected = await memberManager.IsProtectedAsync(content.Path);
+            if (isProtected)
+            {
+                hasAccess = false;
+                var userLoggedIn = membershipUtil.IsLoggedIn();
+                if (userLoggedIn)
+                {
+                    try
+                    {
+
+                        hasAccess = await memberManager.MemberHasAccessAsync(content.Path);
+                        //hasAccess = ServiceUtility.PublicAccessService.HasAccess(content.Path, Membership.GetUser(), Roles.Provider);
+
+                    }
+                    catch (Exception ex)
+                    {
+                        //Serilog.Log.Warning($"XrmPath.UmbracoCore caught error on PublishedContentUtility.HasAccess(): {ex}");
+                        loggingUtil?.Warning($"XrmPath.UmbracoCore caught error on PublishedContentUtility.HasAccess(): {ex}");
+                    }
+                }
+            }
+            return hasAccess;
+        }
 
         public int FindChildNodeId(IPublishedContent? content, ISet<string> nodeTypeAliasSet)
         {

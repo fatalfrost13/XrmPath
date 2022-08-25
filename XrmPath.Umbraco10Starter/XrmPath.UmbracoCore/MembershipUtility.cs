@@ -18,5 +18,11 @@ namespace XrmPath.UmbracoCore.Utilities
                 await memberSignInManager.SignOutAsync();
             }
         }
+
+        public bool IsLoggedIn() 
+        {
+            var loggedInUser = memberManager?.IsLoggedIn() ?? false;
+            return loggedInUser;
+        }
     }
 }

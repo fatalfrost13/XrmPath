@@ -1,6 +1,7 @@
 ﻿using Examine;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using Umbraco.Cms.Core.Security;
 using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Web.Common;
 using Umbraco.Cms.Web.Common.Security;
@@ -21,8 +22,8 @@ namespace XrmPath.UmbracoCore.Utilities
         protected MemberUtility? _memberUtil;
         protected MembershipUtility? _membershipUtil;
 
-        public ServiceUtility(ILogger<object>? logger = null, UmbracoHelper? umbracoHelper = null, IMediaService? mediaService = null, IExamineManager? examineManager = null, IContentService? contentService = null, IContentTypeService? contentTypeService = null, IMemberSignInManager? memberSignInManager = null, IOptions<AppSettingsModel>? appSettings = null)
-            : base(logger, umbracoHelper, mediaService, examineManager, contentService, contentTypeService, memberSignInManager, appSettings)
+        public ServiceUtility(ILogger<object>? logger = null, UmbracoHelper? umbracoHelper = null, IMediaService? mediaService = null, IExamineManager? examineManager = null, IContentService? contentService = null, IContentTypeService? contentTypeService = null, IMemberManager? memberManager = null, IMemberSignInManager? memberSignInManager = null, IOptions<AppSettingsModel>? appSettings = null)
+            : base(logger, umbracoHelper, mediaService, examineManager, contentService, contentTypeService, memberManager, memberSignInManager, appSettings)
         {
             if (_pcUtil == null) {
                 _pcUtil = new PublishedContentUtility(this);
@@ -51,6 +52,10 @@ namespace XrmPath.UmbracoCore.Utilities
         public IContentTypeService? GetContentServiceType()
         {
             return _contentTypeService;
+        }
+        public IMemberManager? GetMemberManager()
+        {
+            return _memberManager;
         }
         public IMemberSignInManager? GetMemberSignInManager() 
         {
