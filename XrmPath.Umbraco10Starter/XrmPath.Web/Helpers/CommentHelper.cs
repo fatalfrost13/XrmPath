@@ -1,6 +1,8 @@
 ﻿using Umbraco.Cms.Core.Models;
+using Umbraco.Cms.Core.Models.PublishedContent;
 using XrmPath.Helpers.Utilities;
 using XrmPath.UmbracoCore.Utilities;
+using XrmPath.Web.Definitions;
 using XrmPath.Web.Models;
 
 namespace XrmPath.Web.Helpers
@@ -13,36 +15,30 @@ namespace XrmPath.Web.Helpers
     {
         public CommentHelper(ServiceUtility serviceUtil) : base(serviceUtil) { }
 
-        public string AliasCategory = "category";
-        public string FieldAllowComments = "allowComments";
-        public string FieldRequiresApproval = "requiresApproval";
-        public string FieldUserName = "userName";
-        public string FieldComment = "userComment";
-        public string FieldHidden = "umbracoNaviHide";
-        public string NameCommentsContainer = "Comments";
-        public string DoctypeContainer = "commentsContainer";
-        public string DoctypeComments = "comment";
-        public string DateFormat = "MMMM d, yyyy h:mm tt";
+
 
         public int ContainerId(int listItemId)
         {
             //int[] containerId = { 0 };
             var containerId = 0;
+            if (umbracoHelper == null) {
+                return containerId;
+            }
             //var listNode = new Node(listItemId);
-            var listNode = umbracoHelper?.Content(listItemId);
+            var listNode = umbracoHelper.Content(listItemId);
 
             if (listNode?.Id > 0)
             {
-                var container = listNode?.Children?.FirstOrDefault(i => i.ContentType.Alias.Equals(DoctypeContainer));
+                var container = listNode?.Children?.FirstOrDefault(i => i.ContentType.Alias.Equals(CommentFields.DoctypeContainer));
                 //foreach (var container in from IPublishedContent container in listNode.Children where containerId[0] == 0 where container.DocumentTypeAlias.ToLower() == DoctypeContainer select container)
                 //{
                 //    containerId[0] = container.Id;
                 //}
 
-                if (container == null && listNode != null)
+                if (container == null && listNode != null && contentService != null)
                 {
                     //no container. need to create a container
-                    var containerDoc = contentService?.Create(NameCommentsContainer, listNode.Id, DoctypeContainer);
+                    var containerDoc = contentService.Create(CommentFields.NameCommentsContainer, listNode.Id, CommentFields.DoctypeContainer);
                     //containerDoc.SetValue("title", NameCommentsContainer);
                     if (containerDoc != null) {
                         contentService?.SaveAndPublish(containerDoc);
@@ -59,15 +55,17 @@ namespace XrmPath.Web.Helpers
         public bool ShowComments(int nodeid)
         {
             var showComments = false;
-
-            var node = umbracoHelper?.Content(nodeid);
-            if (pcUtil?.NodeExists(node) ?? false)
+            if (umbracoHelper == null || pcUtil == null) {
+                return showComments;
+            }
+            var node = umbracoHelper.Content(nodeid);
+            if (pcUtil.NodeExists(node))
             {
                 var allowComments = false;
-                var allowCommentsProp = node?.GetProperty(FieldAllowComments);
+                var allowCommentsProp = node?.GetProperty(CommentFields.FieldAllowComments);
                 if (allowCommentsProp != null)
                 {
-                    allowComments = pcUtil?.GetNodeBoolean(node, FieldAllowComments) ?? false;
+                    allowComments = pcUtil.GetNodeBoolean(node, CommentFields.FieldAllowComments);
                 }
 
                 if (allowComments)
@@ -83,19 +81,20 @@ namespace XrmPath.Web.Helpers
             var strComments = "";
             var count = 0;
 
-            if (ShowComments(nodeid))
+            if (umbracoHelper != null && ShowComments(nodeid))
             {
                 var containerId = ContainerId(nodeid);
-                var containerNode = umbracoHelper?.Content(containerId);
+                var containerNode = umbracoHelper.Content(containerId);
                 if (containerNode != null)
                 {
-                    foreach (var commentNode in containerNode?.Children)
+                    var containerChildren = containerNode.Children ?? Enumerable.Empty<IPublishedContent>();
+                    foreach (var commentNode in containerChildren)
                     {
                         var hidden = false;
-                        var hiddenProp = commentNode.GetProperty(FieldHidden);
+                        var hiddenProp = commentNode.GetProperty(CommentFields.FieldHidden);
                         if (hiddenProp != null)
                         {
-                            hidden = pcUtil?.GetNodeBoolean(commentNode, FieldHidden) ?? false;
+                            hidden = pcUtil?.GetNodeBoolean(commentNode, CommentFields.FieldHidden) ?? false;
                         }
 
                         if (hidden == false)
@@ -120,26 +119,34 @@ namespace XrmPath.Web.Helpers
         }
         public List<CommentModel> GetComments(int id)
         {
-            var itemNode = umbracoHelper?.Content(id);
+            if (umbracoHelper == null)
+            {
+                return new List<CommentModel>();
+            }
+            var itemNode = umbracoHelper.Content(id);
+            
             var commentList = new List<CommentModel>();
             if (itemNode != null)
             {
                 var commentContainerId = ContainerId(itemNode.Id);
-                var containerNode = umbracoHelper?.Content(commentContainerId);
+                var containerNode = umbracoHelper.Content(commentContainerId);
 
                 if (containerNode != null)
                 {
-                    var nodeComments = containerNode?.Children.Where(i => i?.Parent?.Id == containerNode.Id)
-                        .Select(i => new { NodeId = i.Id, userName = pcUtil?.GetContentValue(i, FieldUserName), comment = pcUtil?.GetContentValue(i, FieldComment), i.CreateDate });
+                    var containerChildren = containerNode.Children ?? Enumerable.Empty<IPublishedContent>();
+                    var nodeComments = containerChildren.Where(i => i?.Parent?.Id == containerNode.Id)
+                        .Select(i => new { NodeId = i.Id, userName = pcUtil?.GetContentValue(i, CommentFields.FieldUserName), comment = pcUtil?.GetContentValue(i, CommentFields.FieldComment), i.CreateDate })
+                        .Where(i => i != null);
+
                     if (nodeComments != null)
                     {
                         commentList.AddRange(nodeComments.Select(i => new CommentModel
                         {
                             NodeId = i.NodeId,
-                            UserName = i?.userName ?? "",
-                            Comment = i?.comment ?? "",
+                            UserName = i.userName ?? "",
+                            Comment = i.comment ?? "",
                             CreateDate = i.CreateDate,
-                            DisplayCreateDate = i.CreateDate.ToString(DateFormat)
+                            DisplayCreateDate = i.CreateDate.ToString(CommentFields.DateFormat)
                         }));
                         commentList = commentList.OrderByDescending(i => i.CreateDate).ToList();
                     }
@@ -150,33 +157,38 @@ namespace XrmPath.Web.Helpers
 
         public string CommentFormSubmit(CommentModel commentInfo)
         {
-            string message = "<font color=red>An error has occurred while trying to post your comment. Please try again later.</font>";
+            var message = "<font color=red>An error has occurred while trying to post your comment. Please try again later.</font>";
+            
+            if (umbracoHelper == null || contentService == null) 
+            {
+                return message;
+            }
 
             var containerId = ContainerId(commentInfo.NodeId);
-            var itemNode = umbracoHelper?.Content(commentInfo.NodeId);
+            var itemNode = umbracoHelper.Content(commentInfo.NodeId);
 
-            var commentNodeName = commentInfo.UserName.Trim() + " - " + DateTime.Now.ToString(DateFormat);
-            var commentDoc = contentService?.Create(commentNodeName, containerId, DoctypeComments);
+            var commentNodeName = commentInfo.UserName.Trim() + " - " + DateTime.Now.ToString(CommentFields.DateFormat);
+            var commentDoc = contentService.Create(commentNodeName, containerId, CommentFields.DoctypeComments);
 
             if (itemNode != null && commentDoc != null)
             {
-                commentDoc.SetValue(FieldUserName, commentInfo.UserName.Trim());
-                commentDoc.SetValue(FieldComment, commentInfo.Comment.Trim().RemoveHtml());
+                commentDoc.SetValue(CommentFields.FieldUserName, commentInfo.UserName.Trim());
+                commentDoc.SetValue(CommentFields.FieldComment, commentInfo.Comment.Trim().RemoveHtml());
 
                 var requiresApproval = false;
-                var requiresApprovalProp = itemNode.GetProperty(FieldRequiresApproval);
+                var requiresApprovalProp = itemNode.GetProperty(CommentFields.FieldRequiresApproval);
                 if (requiresApprovalProp != null)
                 {
-                    requiresApproval = pcUtil?.GetNodeBoolean(itemNode, FieldRequiresApproval) ?? false;
+                    requiresApproval = pcUtil?.GetNodeBoolean(itemNode, CommentFields.FieldRequiresApproval) ?? false;
                 }
                 if (requiresApproval == false)
                 {
-                    contentService?.SaveAndPublish(commentDoc);
+                    contentService.SaveAndPublish(commentDoc);
                 }
                 else
                 {
                     //requires approval
-                    contentService?.Save(commentDoc);
+                    contentService.Save(commentDoc);
                 }
 
                 message = requiresApproval == false ? "<font color=green>Your comment has been posted!</font><br /><br />" :

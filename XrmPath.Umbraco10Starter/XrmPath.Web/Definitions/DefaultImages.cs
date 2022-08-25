@@ -1,4 +1,4 @@
-﻿namespace XrmPath.Web.Models.Definitions
+﻿namespace XrmPath.Web.Definitions
 {
     public static class DefaultImages
     {
