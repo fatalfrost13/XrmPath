@@ -28,18 +28,18 @@ namespace XrmPath.UmbracoCore.Utilities
             }
             try
             {
-                if (string.IsNullOrEmpty(docTypes))
+                if (string.IsNullOrEmpty(docTypes) && umbracoHelper != null)
                 {
                     //var taggedNodes = new List<IPublishedContent>();
-                    var rootNodes = umbracoHelper?.ContentAtRoot().ToList() ?? new List<IPublishedContent>();
+                    var rootNodes = umbracoHelper.ContentAtRoot().ToList() ?? new List<IPublishedContent>();
                     if (rootNodes.Any())
                     {
                         taggedNodes = rootNodes.SelectMany(child => pcUtil.FindAllNodes(child, ConfigurationModel.WebsiteContentTypesSet).Where(i => (pcUtil.GetNodeList(i, alias)?.Select(x => x.Id)?.Contains(id)) ?? false));
                     }
                 }
-                else
+                else if(queryUtil != null)
                 {
-                    taggedNodes = queryUtil?.GetPublishedContentByType(docTypes).Where(i => pcUtil.GetNodeList(i, alias).Select(x => x.Id).Contains(id));
+                    taggedNodes = queryUtil.GetPublishedContentByType(docTypes).Where(i => pcUtil.GetNodeList(i, alias).Select(x => x.Id).Contains(id));
                 }
             }
             catch (Exception ex)

@@ -28,7 +28,7 @@ namespace XrmPath.UmbracoCore.Utilities
         public UrlPicker GetUrlPicker(IPublishedContent? content, string alias = "urlPicker")
         {
             var urlPicker = new UrlPicker();
-            if (pcUtil == null)
+            if (pcUtil == null || content == null)
             {
                 return urlPicker;
             }
@@ -37,7 +37,7 @@ namespace XrmPath.UmbracoCore.Utilities
                 Link? firstLink = null;
                 var stringData = pcUtil.GetContentValue(content, alias);
                 var links = new List<Link>();
-                if (content != null && !string.IsNullOrEmpty(stringData))
+                if (!string.IsNullOrEmpty(stringData))
                 {
                     var obj = content.GetProperty(alias)?.GetValue();
                     if (obj?.GetType() == typeof(Link))
@@ -100,11 +100,11 @@ namespace XrmPath.UmbracoCore.Utilities
             return urlPicker;
         }
 
-        public UrlPicker GetUrlPicker(IContent content, string alias = "urlPicker")
+        public UrlPicker GetUrlPicker(IContent? content, string alias = "urlPicker")
         {
             var urlPicker = new UrlPicker();
 
-            if (contentUtil == null) {
+            if (contentUtil == null || content == null) {
                 return urlPicker;
             }
 
@@ -186,9 +186,11 @@ namespace XrmPath.UmbracoCore.Utilities
 
         public string UrlPickerLink(IPublishedContent? navContent, string urlPickerAlias, string property = "")
         {
-            if (navContent == null) {
+            if (navContent == null) 
+            {
                 return "";
             }
+
             var strTitle = "";
             var strTarget = "";
 

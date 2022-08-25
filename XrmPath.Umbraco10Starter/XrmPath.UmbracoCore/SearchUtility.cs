@@ -41,21 +41,13 @@ namespace XrmPath.UmbracoCore.Utilities
         {
             var fieldParams = GetFields();
 
-            //var searchTerm = searchterm;
-            //if (searchTerm == null)
-            //{
-
-            //}
-
             var resultItems = new List<SearchResultItem>();
             ISearchResults? results;
-
 
             results = QuerySearchIndex(searchterm, "ExternalIndex");
             
             if (results != null && results.Any())
             {
-                //var test = (SearchResult)results;
                 var resultsList = results.ToList();
                 var contentResults = GetContentResultItems(resultsList);
                 resultItems.AddRange(contentResults);
@@ -65,17 +57,12 @@ namespace XrmPath.UmbracoCore.Utilities
             results = QuerySearchIndex(searchterm, "PDFIndex");
             if (results != null && results.Any())
             {
-                //var test = (SearchResult)results;
                 var resultsList = results.ToList();
                 var mediaResults = GetMediaResultItems(resultsList);
                 resultItems.AddRange(mediaResults);
             }
 
-
-
             resultItems = resultItems.OrderByDescending(i => i.Score).ToList();
-
-            // //return ResultItems;
             var searchResultCollection = GetSearchPagination(resultItems, pagesize, currentpage);
             return searchResultCollection;
         }
@@ -93,14 +80,14 @@ namespace XrmPath.UmbracoCore.Utilities
             if (indexExists && index != null)
             {
                 var searcher = index.Searcher;
-                IQuery query = searcher.CreateQuery(null, BooleanOperation.And);
-                //string searchFields = "nodeName,pageTitle,metaDescription,bodyText";
+                var query = searcher.CreateQuery(null, BooleanOperation.And);
                 var searchFields = ConfigurationModel.SearchableFields;
-                IBooleanOperation? terms = query.GroupedOr(searchFields.Split(','), searchTerm);
+                var terms = query.GroupedOr(searchFields.Split(','), searchTerm);
                 return terms?.Execute();
             }
             else {
                 //throw new InvalidOperationException($"No index found with name {indexName}");
+                loggingUtil?.Warning($"No index found with name {indexName}");
                 return null;
             }
         }
@@ -108,9 +95,11 @@ namespace XrmPath.UmbracoCore.Utilities
         public decimal WeightedScore(IPublishedContent? content, decimal score, decimal applyMultiplier = 1)
         {
             var weightedScore = score;
-            if (pcUtil == null) {
+            if (pcUtil == null || content == null) 
+            {
                 return weightedScore;
             }
+
             var weight = pcUtil.GetNodeDecimal(content, "weight", 1);
 
             if (weight != 1)
@@ -124,7 +113,6 @@ namespace XrmPath.UmbracoCore.Utilities
 
         private SearchResultItemPager GetSearchPagination(List<SearchResultItem> resultItems, int pagesize, int currentpage)
         {
-
             var resultCount = resultItems.Count;
             var paginationValues = PaginationExtensions.PaginationValues(pagesize, currentpage, resultCount);
             var resultItemsSubset = resultItems;
@@ -309,9 +297,6 @@ namespace XrmPath.UmbracoCore.Utilities
             
             foreach (var searchResult in searchResults)
             {
-                //only pull certain records
-                //var searchNode = umbracoHelper.GetById(searchResult.Id);
-
                 var searchResultId = int.Parse(searchResult.Id);
                 var mediaNode = mediaUtil?.GetMediaItem(searchResultId);
                 if (mediaNode != null)
@@ -339,10 +324,10 @@ namespace XrmPath.UmbracoCore.Utilities
             return resultItems;
         }
 
-        private string SearchResultUrl(ISearchResult searchResult)
+        private string SearchResultUrl(ISearchResult? searchResult)
         {
             var searchUrl = "";
-            if (pcUtil == null || umbracoHelper == null)
+            if (pcUtil == null || umbracoHelper == null || searchResult == null)
             {
                 return searchUrl;
             }
@@ -356,9 +341,13 @@ namespace XrmPath.UmbracoCore.Utilities
             return searchUrl;
         }
 
-        private string GetSearchResultItem(ISearchResult searchResult, string fields)
+        private string GetSearchResultItem(ISearchResult? searchResult, string fields)
         {
             var searchItem = "";
+            if (searchResult == null) 
+            {
+                return searchItem;
+            }
             var fieldList = fields.Split(',');
 
             foreach (var field in fieldList) 

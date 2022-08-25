@@ -20,9 +20,7 @@ namespace XrmPath.UmbracoCore.Utilities
     /// <param name="serviceUtil"></param>
     public class ContentUtility: BaseInitializer
     {
-        public ContentUtility(ServiceUtility? serviceUtil): base(serviceUtil)
-        {
-        }
+        public ContentUtility(ServiceUtility? serviceUtil): base(serviceUtil) { }
 
         public IEnumerable<IContentType> GetContentTypes()
         {
@@ -32,7 +30,7 @@ namespace XrmPath.UmbracoCore.Utilities
 
         public bool NodeExists(IContent? content)
         {
-            return content != null && content.Id > 0;
+            return (content != null && content.Id > 0);
         }
 
         public string GetContentValue(IContent? content, string propertyAlias, string defaultValue = "")
@@ -107,13 +105,13 @@ namespace XrmPath.UmbracoCore.Utilities
 
         public IPublishedContent? ToPublishedContent(IContent? content)
         {
-            if (content == null)
+            if (content == null || umbracoHelper == null)
             {
                 return null;
             }
             if (NodeExists(content) && content.Published)
             {
-                var publishedContent = umbracoHelper?.Content(content.Id);
+                var publishedContent = umbracoHelper.Content(content.Id);
                 if (pcUtil?.NodeExists(publishedContent) ?? false)
                 {
                     return publishedContent;

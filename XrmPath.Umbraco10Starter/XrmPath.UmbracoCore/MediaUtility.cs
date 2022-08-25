@@ -22,10 +22,7 @@ namespace XrmPath.UmbracoCore.Utilities
             {
                 //first check media item via UmbracoHelper
                 //this pulls from lucene index
-
-                //var umbracoHelper = Umbraco.Web.Composing.Current.UmbracoHelper;
                 var typeMediaItem = umbracoHelper?.Media(id);
-                //var publishedMediaItem = new MediaValues(typeMediaItem);
                 if (typeMediaItem != null && (pcUtil?.NodeExists(typeMediaItem) ?? false))
                 {
                     var mediaItem = new MediaItem
@@ -75,8 +72,6 @@ namespace XrmPath.UmbracoCore.Utilities
         }
         public MediaItem? GetMediaItem(Udi? udi)
         {
-            //var id = ServiceUtility.UmbracoHelper.GetIdForUdi(udi);
-            //var id = ServiceUtility.UmbracoHelper.Media(udi)?.Id ?? 0;
             if (udi == null || umbracoHelper == null) {
                 return null;
             }

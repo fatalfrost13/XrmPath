@@ -33,7 +33,7 @@ namespace XrmPath.UmbracoCore.Utilities
         /// <returns></returns>
         public IEnumerable<IPublishedContent> GetPublishedContentByType(string aliases = "")
         {
-            if (aliases.Contains(","))
+            if (aliases.Contains(','))
             {
                 var aliasList = aliases.Split(',');
                 var nodeList = aliasList.SelectMany(GetPublishedContentByTypeSingle).ToList();
@@ -70,7 +70,6 @@ namespace XrmPath.UmbracoCore.Utilities
             {
                 var uniquePage = GetPublishedContentByType(aliases).FirstOrDefault(i => pcUtil.GetContentValue(i, UmbracoCustomFields.UniqueId) == uniqueId);
                 return uniquePage;
-
             }
             else
             {
