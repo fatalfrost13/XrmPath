@@ -1,11 +1,6 @@
-﻿using Microsoft.IdentityModel.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Umbraco.Cms.Core.Models.PublishedContent;
+﻿using Umbraco.Cms.Core.Models.PublishedContent;
 using XrmPath.Helpers.Utilities;
+using XrmPath.UmbracoCore.BaseServices;
 using XrmPath.UmbracoCore.Definitions;
 using XrmPath.UmbracoCore.Models;
 

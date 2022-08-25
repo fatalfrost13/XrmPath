@@ -1,16 +1,10 @@
-﻿using Examine;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Logging;
-using Newtonsoft.Json;
+﻿using Newtonsoft.Json;
 using System.Data;
 using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.Models.PublishedContent;
-using Umbraco.Cms.Core.Services;
-using Umbraco.Cms.Web.Common;
-using Umbraco.Extensions;
 using XrmPath.Helpers.Model;
 using XrmPath.Helpers.Utilities;
+using XrmPath.UmbracoCore.BaseServices;
 using XrmPath.UmbracoCore.Models;
 using XrmPath.UmbracoCore.Models.Definitions;
 

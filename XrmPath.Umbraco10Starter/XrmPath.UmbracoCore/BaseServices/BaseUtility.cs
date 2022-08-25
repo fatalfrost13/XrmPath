@@ -6,7 +6,7 @@ using Umbraco.Cms.Web.Common;
 using Umbraco.Cms.Web.Common.Security;
 using XrmPath.UmbracoCore.Models;
 
-namespace XrmPath.UmbracoCore.Utilities
+namespace XrmPath.UmbracoCore.BaseServices
 {
     public abstract class BaseUtility
     {

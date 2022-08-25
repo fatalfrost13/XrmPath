@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using Umbraco.Cms.Core.Configuration.Models;
 using Umbraco.Cms.Core.Models.PublishedContent;
 using Umbraco.Cms.Web.Common;
 using XrmPath.UmbracoCore.Models;
@@ -32,7 +31,7 @@ namespace XrmPath.Web.Controllers
         public string AppSettings() {
             string appValue = "";
             if (_appSettings != null) {
-                appValue = _appSettings.DateFormat;
+                appValue = _appSettings.DateFormat ?? "";
             }
             return appValue;
         }

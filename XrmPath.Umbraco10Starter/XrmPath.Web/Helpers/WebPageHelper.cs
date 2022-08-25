@@ -3,6 +3,7 @@ using Microsoft.IdentityModel.Logging;
 using System.Linq;
 using Umbraco.Cms.Core.Models.PublishedContent;
 using XrmPath.Helpers.Utilities;
+using XrmPath.UmbracoCore.BaseServices;
 using XrmPath.UmbracoCore.Definitions;
 using XrmPath.UmbracoCore.Models.Definitions;
 using XrmPath.UmbracoCore.Utilities;
@@ -17,9 +18,6 @@ namespace XrmPath.Web.Helpers
     public class WebPageHelper : BaseInitializer
     {
         public WebPageHelper(ServiceUtility serviceUtil) : base(serviceUtil) { }
-
-        //private readonly DateTime viewsEndDate = DateTime.UtcNow.AddHours(1); //add time to compensate for time difference so on refresh the new views are applied no matter what.
-        //private readonly DateTime viewsStartDate = DateTime.UtcNow.AddMonths(-2);
 
         public WebPageModel GetPageModel(IPublishedContent content)
         {

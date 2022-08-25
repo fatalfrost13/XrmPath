@@ -1,6 +1,7 @@
 ﻿using Umbraco.Cms.Core.Models;
 using Umbraco.Cms.Core.Models.PublishedContent;
 using XrmPath.Helpers.Utilities;
+using XrmPath.UmbracoCore.BaseServices;
 using XrmPath.UmbracoCore.Utilities;
 using XrmPath.Web.Definitions;
 using XrmPath.Web.Models;
@@ -14,8 +15,6 @@ namespace XrmPath.Web.Helpers
     public class CommentHelper: BaseInitializer
     {
         public CommentHelper(ServiceUtility serviceUtil) : base(serviceUtil) { }
-
-
 
         public int ContainerId(int listItemId)
         {

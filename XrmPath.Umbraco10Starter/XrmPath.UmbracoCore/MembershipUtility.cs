@@ -1,4 +1,4 @@
-﻿using Umbraco.Cms.Web.Common.Security;
+﻿using XrmPath.UmbracoCore.BaseServices;
 
 namespace XrmPath.UmbracoCore.Utilities
 {

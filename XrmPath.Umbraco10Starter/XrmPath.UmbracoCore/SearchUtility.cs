@@ -2,10 +2,9 @@
 using XrmPath.Helpers.Utilities;
 using Examine.Search;
 using XrmPath.UmbracoCore.Models;
-using Umbraco.Cms.Web.Common;
-using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Core.Models.PublishedContent;
 using XrmPath.UmbracoCore.Definitions;
+using XrmPath.UmbracoCore.BaseServices;
 
 namespace XrmPath.UmbracoCore.Utilities
 {

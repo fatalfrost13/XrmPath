@@ -4,6 +4,7 @@ using Microsoft.Extensions.Options;
 using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Web.Common;
 using Umbraco.Cms.Web.Common.Security;
+using XrmPath.UmbracoCore.BaseServices;
 using XrmPath.UmbracoCore.Models;
 
 namespace XrmPath.UmbracoCore.Utilities

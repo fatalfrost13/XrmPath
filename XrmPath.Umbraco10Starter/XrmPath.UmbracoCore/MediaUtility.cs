@@ -1,10 +1,9 @@
 ﻿using Umbraco.Cms.Core;
 using Umbraco.Cms.Core.Models.PublishedContent;
-using Umbraco.Cms.Core.Services;
-using Umbraco.Cms.Web.Common;
 using XrmPath.Helpers.Utilities;
 using XrmPath.UmbracoCore.Models;
 using XrmPath.UmbracoCore.Definitions;
+using XrmPath.UmbracoCore.BaseServices;
 
 namespace XrmPath.UmbracoCore.Utilities
 {

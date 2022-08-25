@@ -1,9 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using XrmPath.UmbracoCore.BaseServices;
 using XrmPath.UmbracoCore.Utilities;
 
 namespace XrmPath.UmbracoCore

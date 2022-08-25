@@ -6,10 +6,7 @@ using Umbraco.Cms.Core.Models;
 using Umbraco.Cms.Core.Models.PublishedContent;
 using Umbraco.Cms.Core;
 using XrmPath.UmbracoCore.Definitions;
-using SixLabors.ImageSharp.Metadata.Profiles.Iptc;
-using static Umbraco.Cms.Core.Collections.TopoGraph;
-using Lucene.Net.Index;
-using Newtonsoft.Json.Linq;
+using XrmPath.UmbracoCore.BaseServices;
 
 namespace XrmPath.UmbracoCore.Utilities
 {

@@ -1,5 +1,5 @@
 ﻿using Umbraco.Cms.Core.Models.PublishedContent;
-using Umbraco.Cms.Web.Common;
+using XrmPath.UmbracoCore.BaseServices;
 using XrmPath.UmbracoCore.Definitions;
 using XrmPath.UmbracoCore.Models;
 

@@ -1,5 +1,6 @@
 ﻿using Umbraco.Cms.Core.Models;
 using XrmPath.Helpers.Utilities;
+using XrmPath.UmbracoCore.BaseServices;
 
 namespace XrmPath.UmbracoCore.Utilities
 {

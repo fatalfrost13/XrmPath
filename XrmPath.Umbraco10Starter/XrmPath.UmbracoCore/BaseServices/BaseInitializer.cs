@@ -10,8 +10,9 @@ using Umbraco.Cms.Core.Services;
 using Umbraco.Cms.Web.Common;
 using Umbraco.Cms.Web.Common.Security;
 using XrmPath.UmbracoCore.Models;
+using XrmPath.UmbracoCore.Utilities;
 
-namespace XrmPath.UmbracoCore.Utilities
+namespace XrmPath.UmbracoCore.BaseServices
 {
 
     public abstract class BaseInitializer
@@ -34,7 +35,8 @@ namespace XrmPath.UmbracoCore.Utilities
         protected ILogger<object>? logger;
         protected AppSettingsModel? appSettings;
 
-        public BaseInitializer(ServiceUtility? serviceUtil) {
+        public BaseInitializer(ServiceUtility? serviceUtil)
+        {
             if (_serviceUtil == null && serviceUtil != null)
             {
                 _serviceUtil = serviceUtil;
@@ -71,8 +73,8 @@ namespace XrmPath.UmbracoCore.Utilities
             {
                 memberSignInManager = _serviceUtil?.GetMemberSignInManager();
             }
-            if (appSettings == null) 
-            { 
+            if (appSettings == null)
+            {
                 appSettings = _serviceUtil?.GetAppSettings();
             }
         }
