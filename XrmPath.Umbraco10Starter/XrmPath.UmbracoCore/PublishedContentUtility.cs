@@ -247,6 +247,43 @@ namespace XrmPath.UmbracoCore.Utilities
             }
             return boolValue;
         }
+        public IPublishedContent? GetNodeFromString(string contentValue)
+        {
+            if (umbracoHelper == null) {
+                return null;
+            }
+
+            if (contentValue.Contains("umb://"))
+            {
+                var nodeList = new List<IPublishedContent>();
+                var udiValue = contentValue.Split(',').First();
+                var udi = Udi.Create(udiValue);
+                if (udi != null)
+                {
+                    var contentPicker = umbracoHelper.Content(udi);
+                    if (NodeExists(contentPicker))
+                    {
+                        return contentPicker;
+                    }
+                }
+            }
+            else
+            {
+                var nodeList = new List<IPublishedContent>();
+                var idValue = contentValue.Split(',').First();
+                int id;
+                var validId = int.TryParse(idValue, out id);
+                if (validId && id > 0)
+                {
+                    var node = umbracoHelper.Content(id);
+                    if (NodeExists(node))
+                    {
+                        return node;
+                    }
+                }
+            }
+            return null;
+        }
         public List<IPublishedContent> GetNodeList(IPublishedContent? content, string alias)
         {
             var nodeList = new List<IPublishedContent>();
@@ -514,7 +551,7 @@ namespace XrmPath.UmbracoCore.Utilities
             if (isProtected)
             {
                 hasAccess = false;
-                var userLoggedIn = membershipUtil.IsLoggedIn();
+                var userLoggedIn = membershipUtil.UserIsAuthenticated();
                 if (userLoggedIn)
                 {
                     try

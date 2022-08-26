@@ -1,4 +1,5 @@
 ﻿using XrmPath.UmbracoCore.BaseServices;
+using XrmPath.UmbracoCore.Models;
 
 namespace XrmPath.UmbracoCore.Utilities
 {
@@ -19,10 +20,19 @@ namespace XrmPath.UmbracoCore.Utilities
             }
         }
 
-        public bool IsLoggedIn() 
+        public bool UserIsAuthenticated() 
         {
             var loggedInUser = memberManager?.IsLoggedIn() ?? false;
             return loggedInUser;
         }
+        public string GetAuthenticationPage(string uniqueId)
+        {
+            if (queryUtil == null) {
+                return "";
+            }
+            var authPage = queryUtil.GetPageByUniqueId(uniqueId, ConfigurationModel.WebsiteContentTypes)?.Url() ?? string.Empty;
+            return authPage;
+        }
+
     }
 }
